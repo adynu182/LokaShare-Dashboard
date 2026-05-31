@@ -98,7 +98,7 @@ export default function MapView({ locations, selectedUser, onMarkerClick, active
         </div>
         <div class="popup-grid">
           <div><strong>Waktu:</strong> ${formatTimestamp(loc.timestamp || loc.localTimestamp)}</div>
-          <div><strong>Akurasi:</strong> ${accuracy ? accuracy + 'm' : '—'}</div>
+          <div><strong>Akurasi:</strong> ${Math.round(accuracy) ? Math.round(accuracy) + 'm' : '—'}</div>
           <div><strong>Baterai:</strong> ${battery !== undefined && battery !== null ? battery + '%' : '—'} ${isCharging ? '⚡' : ''}</div>
           <div><strong>Perangkat:</strong> ${deviceModel || '—'}</div>
         </div>
