@@ -23,9 +23,9 @@ export default function MapView({ locations, selectedUser, onMarkerClick, active
     L.control.attribution({ position: 'bottomright', prefix: false }).addTo(map);
 
     // Add Premium Dark basemap
-    L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
-      attribution: '© Stadia Maps © OpenStreetMap',
-      maxZoom: 20
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19
     }).addTo(map);
 
     mapInstanceRef.current = map;
