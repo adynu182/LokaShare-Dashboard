@@ -56,7 +56,7 @@ export default function MapView({ locations, selectedUser, onMarkerClick, active
     if (locations.length === 0) return;
 
     const latLngs = [];
-    
+
     // Sort locations by timestamp ascending to draw path chronologically,
     // but markers list in standard order (latest is index 0 in the list).
     // Let's find latest point.
@@ -98,16 +98,14 @@ export default function MapView({ locations, selectedUser, onMarkerClick, active
         </div>
         <div class="popup-grid">
           <div><strong>Waktu:</strong> ${formatTimestamp(loc.timestamp || loc.localTimestamp)}</div>
-          <div><strong>Koordinat:</strong> ${Number(latitude).toFixed(6)}, ${Number(longitude).toFixed(6)}</div>
           <div><strong>Akurasi:</strong> ${accuracy ? accuracy + 'm' : '—'}</div>
           <div><strong>Baterai:</strong> ${battery !== undefined && battery !== null ? battery + '%' : '—'} ${isCharging ? '⚡' : ''}</div>
           <div><strong>Perangkat:</strong> ${deviceModel || '—'}</div>
-          <div><strong>Sumber:</strong> ${source || '—'}</div>
         </div>
       `;
 
       marker.bindPopup(popupContent, { maxWidth: 260 });
-      
+
       marker.on('click', () => {
         if (onMarkerClick) {
           onMarkerClick(i);
@@ -134,8 +132,8 @@ export default function MapView({ locations, selectedUser, onMarkerClick, active
     // Auto-fit bounds on initial or filtered render
     if (latLngs.length > 0) {
       const bounds = L.latLngBounds(latLngs);
-      map.fitBounds(bounds, { 
-        padding: [60, 60], 
+      map.fitBounds(bounds, {
+        padding: [60, 60],
         maxZoom: 16,
         animate: true,
         duration: 0.8
@@ -166,7 +164,7 @@ export default function MapView({ locations, selectedUser, onMarkerClick, active
   return (
     <div className="map-container-fullscreen">
       <div id="map" ref={mapContainerRef}></div>
-      
+
       {/* Map Stat Chips */}
       {locations.length > 0 && latestLoc && (
         <div className="map-overlay-stats">
