@@ -23,9 +23,9 @@ export default function MapView({ locations, selectedUser, onMarkerClick, active
     L.control.attribution({ position: 'bottomright', prefix: false }).addTo(map);
 
     // Add Premium Dark basemap
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '© OpenStreetMap © CARTO',
-      maxZoom: 19,
+    L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+      attribution: '© Stadia Maps © OpenStreetMap',
+      maxZoom: 20
     }).addTo(map);
 
     mapInstanceRef.current = map;
