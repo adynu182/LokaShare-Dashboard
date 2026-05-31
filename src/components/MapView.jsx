@@ -183,7 +183,7 @@ export default function MapView({ locations, selectedUser, onMarkerClick, active
           {latestLoc.accuracy && (
             <div className="stat-chip">
               <span className="chip-icon">🎯</span>
-              {latestLoc.accuracy}m
+              {Math.round(latestLoc.accuracy)}m
             </div>
           )}
         </div>
