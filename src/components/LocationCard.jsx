@@ -28,7 +28,7 @@ export default function LocationCard({ loc, index, onClick }) {
           )}
           {loc.isCharging && <span className="meta-tag charging">⚡ Charging</span>}
           {loc.deviceModel && <span className="meta-tag device">📱 {loc.deviceModel}</span>}
-          {loc.accuracy && <span className="meta-tag accuracy">🎯 {loc.accuracy}m</span>}
+          {loc.accuracy && <span className="meta-tag accuracy">🎯 {Math.round(loc.accuracy)}m</span>}
           {loc.source && <span className="meta-tag source-tag">📡 {loc.source}</span>}
         </div>
       </div>
