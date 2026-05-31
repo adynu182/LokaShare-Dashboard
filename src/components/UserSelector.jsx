@@ -19,7 +19,6 @@ export default function UserSelector({
             value={selectedUser} 
             onChange={(e) => onSelectUser(e.target.value)}
           >
-            <option value="">— Semua User —</option>
             {users.map((user) => (
               <option key={user} value={user}>
                 👤 {user}
@@ -35,7 +34,6 @@ export default function UserSelector({
             value={selectedDate} 
             onChange={(e) => onSelectDate(e.target.value)}
           >
-            <option value="">— Semua Tanggal —</option>
             {dates.map((dateKey) => (
               <option key={dateKey} value={dateKey}>
                 📅 {formatLocalDate(dateKey)}

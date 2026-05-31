@@ -11,11 +11,30 @@ import './App.css';
 export default function App() {
   const { allLocations, users, loading, error, connectionStatus } = useLocations();
   
+  // Generate unique date keys from all locations
+  const dates = [
+    ...new Set(
+      allLocations.map((loc) => getLocalDateKey(loc.timestamp || loc.localTimestamp)).filter(Boolean)
+    ),
+  ].sort((a, b) => b.localeCompare(a));
+
   const [selectedUser, setSelectedUser] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [panelState, setPanelState] = useState('peek'); // 'collapsed' | 'peek' | 'expanded'
   const [activeMapIndex, setActiveMapIndex] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
+
+  // Auto-select first user and first date on load
+  useEffect(() => {
+    if (!loading) {
+      if (!selectedUser && users.length > 0) {
+        setSelectedUser(users[0]);
+      }
+      if (!selectedDate && dates.length > 0) {
+        setSelectedDate(dates[0]);
+      }
+    }
+  }, [loading, users, dates, selectedUser, selectedDate]);
 
   // Auto toast on new location records or filter change
   useEffect(() => {
@@ -29,8 +48,6 @@ export default function App() {
     setActiveMapIndex(null); // Reset focus
     if (user) {
       triggerToast(`Menampilkan lokasi: ${user}`);
-    } else {
-      triggerToast('Menampilkan semua user');
     }
   };
 
@@ -39,8 +56,6 @@ export default function App() {
     setActiveMapIndex(null); // Reset focus
     if (date) {
       triggerToast(`Menampilkan tanggal: ${formatLocalDate(date)}`);
-    } else {
-      triggerToast('Menampilkan semua tanggal');
     }
   };
 
@@ -55,13 +70,6 @@ export default function App() {
       setPanelState('peek');
     }
   };
-
-  // Generate unique date keys from all locations
-  const dates = [
-    ...new Set(
-      allLocations.map((loc) => getLocalDateKey(loc.timestamp || loc.localTimestamp)).filter(Boolean)
-    ),
-  ].sort((a, b) => b.localeCompare(a));
 
   // Filter locations
   let filteredLocations = [...allLocations];
