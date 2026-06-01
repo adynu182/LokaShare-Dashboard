@@ -10,17 +10,20 @@ import { deleteUserLocations } from './utils/deleteUserData';
 import './App.css';
 
 export default function App() {
-  const { allLocations, users, loading, error, connectionStatus } = useLocations();
-  
-  // Generate unique date keys from all locations
+  // Default selected date: today (local date key)
+  const todayKey = getLocalDateKey(Date.now());
+
+  const [selectedUser, setSelectedUser] = useState('');
+  const [selectedDate, setSelectedDate] = useState(todayKey);
+
+  const { allLocations, users, loading, error, connectionStatus } = useLocations(selectedUser, selectedDate);
+
+  // Generate unique date keys from received locations
   const dates = [
     ...new Set(
       allLocations.map((loc) => getLocalDateKey(loc.timestamp || loc.localTimestamp)).filter(Boolean)
     ),
   ].sort((a, b) => b.localeCompare(a));
-
-  const [selectedUser, setSelectedUser] = useState('');
-  const [selectedDate, setSelectedDate] = useState('');
   const [panelState, setPanelState] = useState('peek'); // 'collapsed' | 'peek' | 'expanded'
   const [activeMapIndex, setActiveMapIndex] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
