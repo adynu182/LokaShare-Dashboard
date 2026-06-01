@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { formatTimestamp, getTimestampMs } from '../utils/helpers';
+import { formatTimestamp, getPreferredTimestamp, getTimestampMs } from '../utils/helpers';
 import { getUserColor } from '../utils/markerColors';
 
 export default function MapView({ locations, selectedUser, onMarkerClick, activeMapIndex }) {
@@ -97,7 +97,7 @@ export default function MapView({ locations, selectedUser, onMarkerClick, active
           👤 ${userName || 'Unknown'} ${isLatest ? '<span class="latest-popup-badge">Terbaru</span>' : ''}
         </div>
         <div class="popup-grid">
-          <div><strong>Waktu:</strong> ${formatTimestamp(loc.timestamp || loc.localTimestamp)}</div>
+          <div><strong>Waktu:</strong> ${formatTimestamp(getPreferredTimestamp(loc))}</div>
           <div><strong>Akurasi:</strong> ${Math.round(accuracy) ? Math.round(accuracy) + 'm' : '—'}</div>
           <div><strong>Baterai:</strong> ${battery !== undefined && battery !== null ? battery + '%' : '—'} ${isCharging ? '⚡' : ''}</div>
           <div><strong>Perangkat:</strong> ${deviceModel || '—'}</div>

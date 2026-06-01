@@ -20,8 +20,12 @@ export function formatTimestamp(ts) {
   });
 }
 
+export function getPreferredTimestamp(loc) {
+  return loc?.localTimestamp ?? loc?.timestamp ?? null;
+}
+
 export function getTimestampMs(loc) {
-  const ts = loc.timestamp || loc.localTimestamp;
+  const ts = getPreferredTimestamp(loc);
   if (!ts) return 0;
   if (ts.toDate) return ts.toDate().getTime();
   if (ts.seconds) return ts.seconds * 1000;

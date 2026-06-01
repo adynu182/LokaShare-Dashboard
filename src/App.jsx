@@ -5,7 +5,7 @@ import MapView from './components/MapView';
 import BottomPanel from './components/BottomPanel';
 import Toast from './components/Toast';
 import { useLocations } from './hooks/useLocations';
-import { getTimestampMs, getLocalDateKey, formatLocalDate } from './utils/helpers';
+import { getTimestampMs, getLocalDateKey, getPreferredTimestamp, formatLocalDate } from './utils/helpers';
 import { deleteUserLocations } from './utils/deleteUserData';
 import './App.css';
 
@@ -15,7 +15,7 @@ export default function App() {
   // Generate unique date keys from all locations
   const dates = [
     ...new Set(
-      allLocations.map((loc) => getLocalDateKey(loc.timestamp || loc.localTimestamp)).filter(Boolean)
+      allLocations.map((loc) => getLocalDateKey(getPreferredTimestamp(loc))).filter(Boolean)
     ),
   ].sort((a, b) => b.localeCompare(a));
 
@@ -91,7 +91,7 @@ export default function App() {
   }
   if (selectedDate) {
     filteredLocations = filteredLocations.filter(
-      loc => getLocalDateKey(loc.timestamp || loc.localTimestamp) === selectedDate
+      loc => getLocalDateKey(getPreferredTimestamp(loc)) === selectedDate
     );
   }
 
