@@ -1,6 +1,6 @@
 import React from 'react';
 import LocationCard from './LocationCard';
-import { getLocalDateKey, getPreferredTimestamp, formatLocalDate } from '../utils/helpers';
+import { getLocalDateKey, formatLocalDate } from '../utils/helpers';
 
 export default function BottomPanel({ 
   locations, 
@@ -24,7 +24,7 @@ export default function BottomPanel({
   // Group locations by local date key
   const groupedLocations = {};
   locations.forEach((loc, index) => {
-    const dateKey = getLocalDateKey(getPreferredTimestamp(loc));
+    const dateKey = getLocalDateKey(loc.localTimestamp);
     if (!groupedLocations[dateKey]) {
       groupedLocations[dateKey] = [];
     }

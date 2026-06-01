@@ -1,11 +1,11 @@
 import React from 'react';
-import { formatTimestamp, getPreferredTimestamp, batteryClass, batteryIcon, formatCoords } from '../utils/helpers';
+import { formatTimestamp, batteryClass, batteryIcon, formatCoords } from '../utils/helpers';
 
 export default function LocationCard({ loc, index, onClick }) {
   const battCls = batteryClass(loc.battery);
   const battIcon = batteryIcon(loc.battery, loc.isCharging);
   const coordsStr = formatCoords(loc.latitude, loc.longitude);
-  const timeStr = formatTimestamp(getPreferredTimestamp(loc));
+  const timeStr = formatTimestamp(loc.localTimestamp);
 
   return (
     <div 

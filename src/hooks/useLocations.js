@@ -13,11 +13,7 @@ export function useLocations() {
     setConnectionStatus('Menghubungkan...');
     
     const locRef = collection(db, 'locations');
-    const q = query(
-      locRef,
-      orderBy('localTimestamp', 'desc'),
-      orderBy('timestamp', 'desc')
-    );
+    const q = query(locRef, orderBy('timestamp', 'desc'));
 
     const unsubscribe = onSnapshot(
       q,

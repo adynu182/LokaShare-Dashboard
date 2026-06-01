@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { formatTimestamp, getPreferredTimestamp, getTimestampMs } from '../utils/helpers';
+import { formatTimestamp, getTimestampMs } from '../utils/helpers';
 import { getUserColor } from '../utils/markerColors';
 
 export default function MapView({ locations, selectedUser, onMarkerClick, activeMapIndex }) {
@@ -57,7 +57,7 @@ export default function MapView({ locations, selectedUser, onMarkerClick, active
 
     const latLngs = [];
 
-    // Sort locations by timestamp ascending to draw path chronologically,
+    // Sort locations by localTimestamp ascending to draw path chronologically,
     // but markers list in standard order (latest is index 0 in the list).
     // Let's find latest point.
     // The list is sorted newest first. So index 0 is the latest point.
@@ -97,7 +97,7 @@ export default function MapView({ locations, selectedUser, onMarkerClick, active
           👤 ${userName || 'Unknown'} ${isLatest ? '<span class="latest-popup-badge">Terbaru</span>' : ''}
         </div>
         <div class="popup-grid">
-          <div><strong>Waktu:</strong> ${formatTimestamp(getPreferredTimestamp(loc))}</div>
+          <div><strong>Waktu:</strong> ${formatTimestamp(loc.localTimestamp)}</div>
           <div><strong>Akurasi:</strong> ${Math.round(accuracy) ? Math.round(accuracy) + 'm' : '—'}</div>
           <div><strong>Baterai:</strong> ${battery !== undefined && battery !== null ? battery + '%' : '—'} ${isCharging ? '⚡' : ''}</div>
           <div><strong>Perangkat:</strong> ${deviceModel || '—'}</div>
