@@ -6,6 +6,7 @@ import BottomPanel from './components/BottomPanel';
 import Toast from './components/Toast';
 import { useLocations } from './hooks/useLocations';
 import { getTimestampMs, getLocalDateKey, formatLocalDate } from './utils/helpers';
+import { deleteUserLocations } from './utils/deleteUserData';
 import './App.css';
 
 export default function App() {
@@ -63,6 +64,18 @@ export default function App() {
     setToastMessage(message);
   };
 
+  const handleDeleteUser = async (userName) => {
+    const result = await deleteUserLocations(userName);
+    
+    if (result.success) {
+      triggerToast(`✅ Berhasil menghapus ${result.deletedCount} data lokasi untuk ${userName}`);
+      // Reset selected user to avoid confusion
+      setSelectedUser('');
+    } else {
+      triggerToast(`❌ Gagal menghapus data: ${result.error}`);
+    }
+  };
+
   const handleCardClick = (index) => {
     setActiveMapIndex(index);
     // Bring panel down slightly to view map comfortably on click
@@ -88,7 +101,11 @@ export default function App() {
   return (
     <div className="app-container">
       {/* Top Header Overlay */}
-      <Header connectionStatus={connectionStatus} />
+      <Header 
+        connectionStatus={connectionStatus}
+        selectedUser={selectedUser}
+        onDeleteUser={handleDeleteUser}
+      />
 
       {/* Floating User & Date Filters */}
       <UserSelector 

@@ -112,6 +112,43 @@ html, body, #root {
   border: 1px solid var(--border-color);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-delete-btn {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+}
+
+.header-delete-btn:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+}
+
+.header-delete-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.header-delete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .status-dot {
   width: 8px;
   height: 8px;
