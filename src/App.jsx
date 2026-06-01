@@ -97,6 +97,7 @@ export default function App() {
 
   // Sort locations: Newest first
   filteredLocations.sort((a, b) => getTimestampMs(b) - getTimestampMs(a));
+  const headerDeviceModel = filteredLocations[0]?.deviceModel || '';
 
   return (
     <div className="app-container">
@@ -105,6 +106,7 @@ export default function App() {
         connectionStatus={connectionStatus}
         selectedUser={selectedUser}
         onDeleteUser={handleDeleteUser}
+        deviceModel={headerDeviceModel}
       />
 
       {/* Floating User & Date Filters */}

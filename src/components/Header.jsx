@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function Header({ connectionStatus, selectedUser, onDeleteUser }) {
+export default function Header({ connectionStatus, selectedUser, onDeleteUser, deviceModel }) {
   const isConnected = connectionStatus === 'Terhubung';
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -28,7 +28,10 @@ export default function Header({ connectionStatus, selectedUser, onDeleteUser })
     <header className="header">
       <div className="header-logo">
         <div className="logo-icon">📍</div>
-        <span className="logo-text">LokaShare</span>
+        <div className="logo-text-wrap">
+          <span className="logo-text">LokaShare</span>
+          {deviceModel && <span className="logo-subtitle">{deviceModel}</span>}
+        </div>
       </div>
       <div className="header-actions">
         <button 

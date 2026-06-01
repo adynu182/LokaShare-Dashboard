@@ -89,14 +89,29 @@ html, body, #root {
   box-shadow: 0 2px 12px rgba(59, 130, 246, 0.3);
 }
 
+.logo-text-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1;
+}
+
 .logo-text {
   font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.5px;
+  line-height: 1.05;
   background: var(--gradient-main);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.logo-subtitle {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.2;
 }
 
 .header-status {
@@ -389,6 +404,13 @@ html, body, #root {
 .panel-title {
   font-size: 15px;
   font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+.panel-card {
+  font-size: 10px;
+  font-weight: 400;
   color: var(--text-primary);
   letter-spacing: -0.3px;
 }
@@ -865,6 +887,9 @@ html, body, #root {
   }
   .panel-title {
     font-size: 13px;
+  }
+  .panel-card {
+    font-size: 10px;
   }
   .panel-count {
     font-size: 10px;

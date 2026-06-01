@@ -16,10 +16,9 @@ export default function LocationCard({ loc, index, onClick }) {
       <div className="loc-card-index">{index + 1}</div>
       <div className="loc-card-body">
         <div className="loc-card-top">
-          <span className="loc-card-user">{loc.userName || 'Unknown'}</span>
-          <span className="loc-card-time">{timeStr}</span>
+          <span className="panel-card">Waktu:</span> <span className="loc-card-time">{timeStr}</span>
         </div>
-        <div className="loc-card-coords">{coordsStr}</div>
+        <div className="loc-card-coords"><span className="panel-card">Lokasi:</span> {coordsStr}</div>
         <div className="loc-card-meta">
           {loc.battery !== undefined && loc.battery !== null && (
             <span className={`meta-tag battery ${battCls}`}>
@@ -27,7 +26,6 @@ export default function LocationCard({ loc, index, onClick }) {
             </span>
           )}
           {loc.isCharging && <span className="meta-tag charging">⚡ Charging</span>}
-          {loc.deviceModel && <span className="meta-tag device">📱 {loc.deviceModel}</span>}
           {loc.accuracy && <span className="meta-tag accuracy">🎯 {Math.round(loc.accuracy)}m</span>}
           {loc.source && <span className="meta-tag source-tag">📡 {loc.source}</span>}
         </div>

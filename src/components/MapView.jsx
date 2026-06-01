@@ -64,7 +64,7 @@ export default function MapView({ locations, selectedUser, onMarkerClick, active
     const latestLoc = locations[0];
 
     locations.forEach((loc, i) => {
-      const { latitude, longitude, userName, battery, isCharging, accuracy, deviceModel, source } = loc;
+      const { latitude, longitude, userName, battery, isCharging, accuracy, source } = loc;
       if (!latitude || !longitude) return;
 
       const userColor = getUserColor(userName);
@@ -94,13 +94,12 @@ export default function MapView({ locations, selectedUser, onMarkerClick, active
       // Info Popup
       const popupContent = `
         <div class="popup-title" style="color: ${userColor}; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; margin-bottom: 6px;">
-          👤 ${userName || 'Unknown'} ${isLatest ? '<span class="latest-popup-badge">Terbaru</span>' : ''}
+          📍 Lokasi ${isLatest ? '<span class="latest-popup-badge">Terbaru</span>' : ''}
         </div>
         <div class="popup-grid">
           <div><strong>Waktu:</strong> ${formatTimestamp(loc.localTimestamp)}</div>
           <div><strong>Akurasi:</strong> ${Math.round(accuracy) ? Math.round(accuracy) + 'm' : '—'}</div>
           <div><strong>Baterai:</strong> ${battery !== undefined && battery !== null ? battery + '%' : '—'} ${isCharging ? '⚡' : ''}</div>
-          <div><strong>Perangkat:</strong> ${deviceModel || '—'}</div>
         </div>
       `;
 
