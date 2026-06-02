@@ -16,12 +16,19 @@ export default function App() {
   // State
   const [activeTab, setActiveTab] = useState('map');
   const [selectedUser, setSelectedUser] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
   const [activeIndex, setActiveIndex] = useState(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [toast, setToast] = useState({ message: '', type: 'info' });
 
   const filteredLocations = allLocations
-    .filter(loc => !selectedUser || loc.userName === selectedUser);
+    .filter(loc => !selectedUser || loc.userName === selectedUser)
+    .filter(loc => {
+      if (!selectedDate) return true;
+      if (!loc.timestamp) return false;
+      const date = new Date(loc.timestamp.seconds * 1000).toLocaleDateString('id-ID');
+      return date === selectedDate;
+    });
 
   const latestLocation = filteredLocations[0];
 
@@ -36,11 +43,25 @@ export default function App() {
   const triggerToast = (message, type = 'info') => setToast({ message, type });
 
   const handleSelectUser = (user) => {
-    setSelectedUser(user);
+    if (selectedUser === user) {
+      setSelectedUser('');
+    } else {
+      setSelectedUser(user);
+    }
+    setSelectedDate('');
+    setActiveIndex(null);
+  };
+
+  const handleSelectDate = (date) => {
+    setSelectedDate(date);
     setActiveIndex(null);
     setActiveTab('map');
     setIsSheetOpen(false);
-    triggerToast(`Melihat lokasi ${user}`, 'info');
+    if (date) {
+      triggerToast(`Melihat lokasi tanggal ${date}`, 'info');
+    } else {
+      triggerToast(`Melihat semua lokasi ${selectedUser}`, 'info');
+    }
   };
 
   const handleDeleteUser = async (userName) => {
@@ -55,7 +76,6 @@ export default function App() {
 
   const handleMarkerClick = (index) => {
     setActiveIndex(index);
-    // Don't open sheet, data is in popup
   };
 
   return (
@@ -88,7 +108,10 @@ export default function App() {
           <PeopleView 
             users={users} 
             selectedUser={selectedUser} 
-            onSelectUser={handleSelectUser} 
+            onSelectUser={handleSelectUser}
+            allLocations={allLocations}
+            selectedDate={selectedDate}
+            onSelectDate={handleSelectDate}
           />
         )}
         {activeTab === 'manage' && (

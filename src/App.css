@@ -158,6 +158,12 @@
   gap: 0.75rem;
 }
 
+.user-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .user-card {
   display: flex;
   align-items: center;
@@ -168,76 +174,52 @@
   border-radius: 16px;
   cursor: pointer;
   transition: all 0.2s;
+  width: 100%;
+  text-align: left;
 }
 
-.user-card:hover {
-  background: white;
-  border-color: var(--border);
-  box-shadow: var(--shadow-sm);
+.date-filter-collapse {
+  padding: 0.5rem 0.75rem 0.5rem 4rem;
+  animation: slideDown 0.3s ease-out;
 }
 
-.user-card.active {
-  background: white;
-  border-color: var(--primary);
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.user-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 700;
-  font-size: 1.2rem;
+.transition-transform {
+  transition: transform 0.3s ease;
 }
 
-.user-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+.rotate-90 {
+  transform: rotate(90deg);
 }
-
-.user-name {
-  font-weight: 600;
-  color: var(--foreground);
-}
-
-.user-status {
-  font-size: 0.8rem;
-  color: var(--muted-foreground);
-}
-
-/* Timeline */
-.date-filter-scroll {
-  display: flex;
-  gap: 0.5rem;
-  overflow-x: auto;
-  padding-bottom: 0.5rem;
-  scrollbar-width: none;
-}
-
-.date-filter-scroll::-webkit-scrollbar { display: none; }
 
 .date-pill {
   display: flex;
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  background: var(--muted);
-  border: 1px solid transparent;
+  background: white;
+  border: 1px solid var(--border);
   border-radius: 20px;
   font-size: 0.85rem;
   white-space: nowrap;
   color: var(--muted-foreground);
   cursor: pointer;
+  transition: all 0.2s;
+}
+
+.date-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .date-pill.active {
   background: var(--primary);
   color: white;
+  border-color: var(--primary);
 }
 
 .timeline-list {

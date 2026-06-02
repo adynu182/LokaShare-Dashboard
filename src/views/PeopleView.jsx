@@ -1,9 +1,18 @@
-import React from 'react';
-import { User, ChevronRight } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { User, ChevronRight, Calendar } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { getUserColor } from '../utils/markerColors';
 
-export default function PeopleView({ users, selectedUser, onSelectUser }) {
+export default function PeopleView({ users, selectedUser, onSelectUser, allLocations, selectedDate, onSelectDate }) {
+  // Get unique dates for a specific user
+  const getUserDates = (userName) => {
+    const userLocs = allLocations.filter(loc => loc.userName === userName && loc.timestamp);
+    const dates = userLocs.map(loc => 
+      new Date(loc.timestamp.seconds * 1000).toLocaleDateString('id-ID')
+    );
+    return [...new Set(dates)];
+  };
+
   return (
     <div className="view-container">
       <div className="user-list">
@@ -13,25 +22,60 @@ export default function PeopleView({ users, selectedUser, onSelectUser }) {
             <p>Tidak ada pengguna ditemukan</p>
           </div>
         ) : (
-          users.map((user) => (
-            <button
-              key={user}
-              onClick={() => onSelectUser(user)}
-              className={cn("user-card", selectedUser === user && "active")}
-            >
-              <div 
-                className="user-avatar" 
-                style={{ backgroundColor: getUserColor(user) }}
-              >
-                {user.charAt(0).toUpperCase()}
+          users.map((user) => {
+            const isSelected = selectedUser === user;
+            const userDates = isSelected ? getUserDates(user) : [];
+            
+            return (
+              <div key={user} className="user-card-wrapper">
+                <button
+                  onClick={() => onSelectUser(user)}
+                  className={cn("user-card", isSelected && "active")}
+                >
+                  <div 
+                    className="user-avatar" 
+                    style={{ backgroundColor: getUserColor(user) }}
+                  >
+                    {user.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="user-info">
+                    <span className="user-name">{user}</span>
+                    <span className="user-status">
+                      {isSelected ? 'Pilih tanggal untuk melihat detail' : 'Klik untuk melihat lokasi'}
+                    </span>
+                  </div>
+                  <ChevronRight 
+                    size={20} 
+                    className={cn("text-muted-foreground transition-transform", isSelected && "rotate-90")} 
+                  />
+                </button>
+
+                {/* Collapsible Date Filter */}
+                {isSelected && (
+                  <div className="date-filter-collapse">
+                    <div className="date-filter-scroll">
+                      <button
+                        onClick={() => onSelectDate('')}
+                        className={cn("date-pill", !selectedDate && "active")}
+                      >
+                        Semua
+                      </button>
+                      {userDates.map(date => (
+                        <button
+                          key={date}
+                          onClick={() => onSelectDate(date)}
+                          className={cn("date-pill", selectedDate === date && "active")}
+                        >
+                          <Calendar size={14} />
+                          {date}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className="user-info">
-                <span className="user-name">{user}</span>
-                <span className="user-status">Klik untuk melihat lokasi</span>
-              </div>
-              <ChevronRight size={20} className="text-muted-foreground" />
-            </button>
-          ))
+            );
+          })
         )}
       </div>
     </div>
