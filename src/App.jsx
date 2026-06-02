@@ -81,8 +81,6 @@ export default function App() {
 
   const handleMarkerClick = (index) => {
     setActiveIndex(index);
-    setActiveTab('map');
-    setIsSheetOpen(true);
   };
 
   return (

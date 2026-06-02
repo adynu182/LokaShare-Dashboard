@@ -27,7 +27,7 @@ export default function PetaView({ locations, onSelectLocation }) {
             <div className="timeline-content" style={{ padding: '0.75rem 1rem' }}>
               <div className="timeline-header" style={{ display: 'flex', gap: '8px' }}>
                 <span className="timeline-time" style={{ fontWeight: '700' }}>
-                  {index + 1}.
+                  {locations.length - index}.
                 </span>
                 <span className="timeline-time">
                   {loc.timestamp?.seconds 
