@@ -46,38 +46,6 @@ export default function BottomPanel({
             <span className="panel-title">📋 Riwayat Lokasi</span>
             <span className="panel-count">{locations.length} data</span>
           </div>
-          <div className="panel-controls">
-            <button 
-              className={`panel-toggle-btn ${panelState === 'collapsed' ? 'active' : ''}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                setPanelState('collapsed');
-              }}
-              title="Sembunyikan"
-            >
-              🔽
-            </button>
-            <button 
-              className={`panel-toggle-btn ${panelState === 'peek' ? 'active' : ''}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                setPanelState('peek');
-              }}
-              title="Sedang"
-            >
-              📊
-            </button>
-            <button 
-              className={`panel-toggle-btn ${panelState === 'expanded' ? 'active' : ''}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                setPanelState('expanded');
-              }}
-              title="Penuh"
-            >
-              🔼
-            </button>
-          </div>
         </div>
       </div>
 

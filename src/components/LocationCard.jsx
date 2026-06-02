@@ -43,27 +43,27 @@ export default function LocationCard({ loc, index, onClick }) {
       <div className="loc-card-index">{index + 1}</div>
       <div className="loc-card-body">
         <div className="loc-card-top">
-          <span className="panel-card">Waktu:</span> <span className="loc-card-time">{timeStr}</span>
+          <span className="loc-card-time">{timeStr}</span>
         </div>
         <div className="loc-card-coords">
-          <span className="panel-card">Lokasi:</span> {coordsStr}
+          {coordsStr}
         </div>
         
         {/* Reverse Geocoding Section */}
         <div className="loc-card-address-container">
           {!address && !loadingAddress && (
             <button className="address-btn" onClick={fetchAddress}>
-              📍 Lihat Alamat
+              Lihat Alamat
             </button>
           )}
           {loadingAddress && (
             <div className="address-loading">
-              <span className="address-spinner"></span> Mencari alamat...
+              <span className="address-spinner"></span>
             </div>
           )}
           {address && (
             <div className="address-text">
-              <span className="panel-card">Alamat:</span> {address}
+              {address}
             </div>
           )}
         </div>
@@ -74,7 +74,7 @@ export default function LocationCard({ loc, index, onClick }) {
               {battIcon} {loc.battery}%
             </span>
           )}
-          {loc.isCharging && <span className="meta-tag charging">⚡ Charging</span>}
+          {loc.isCharging && <span className="meta-tag charging">⚡</span>}
           {loc.accuracy && <span className="meta-tag accuracy">🎯 {Math.round(loc.accuracy)}m</span>}
           {loc.source && <span className="meta-tag source-tag">📡 {loc.source}</span>}
         </div>
