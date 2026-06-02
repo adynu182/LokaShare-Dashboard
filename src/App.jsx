@@ -7,6 +7,7 @@ import MainSheet from './components/MainSheet';
 import MapCanvas from './components/MapCanvas';
 import PeopleView from './views/PeopleView';
 import ManageView from './views/ManageView';
+import PetaView from './views/PetaView';
 import ModernToast from './components/ModernToast';
 import './App.css';
 
@@ -60,7 +61,7 @@ export default function App() {
     setSelectedDate(date);
     setActiveIndex(null);
     setActiveTab('map');
-    setIsSheetOpen(false);
+    setIsSheetOpen(true);
     if (date) {
       triggerToast(`Melihat lokasi tanggal ${date}`, 'info');
     } else {
@@ -80,6 +81,8 @@ export default function App() {
 
   const handleMarkerClick = (index) => {
     setActiveIndex(index);
+    setActiveTab('map');
+    setIsSheetOpen(true);
   };
 
   return (
@@ -105,9 +108,12 @@ export default function App() {
         setIsOpen={setIsSheetOpen}
         title={
           activeTab === 'people' ? 'Daftar Orang' :
-          activeTab === 'manage' ? 'Pengaturan' : 'Detail Lokasi'
+          activeTab === 'manage' ? 'Pengaturan' : 'Daftar Lokasi'
         }
       >
+        {activeTab === 'map' && (
+          <PetaView locations={filteredLocations} />
+        )}
         {activeTab === 'people' && (
           <PeopleView 
             users={users} 
@@ -129,11 +135,7 @@ export default function App() {
       {/* Navigation Hub */}
       <BottomNav activeTab={activeTab} setActiveTab={(tab) => {
         setActiveTab(tab);
-        if (tab === 'map') {
-          setIsSheetOpen(false);
-        } else {
-          setIsSheetOpen(true);
-        }
+        setIsSheetOpen(true);
       }} />
 
       {/* Notifications */}
