@@ -189,6 +189,22 @@
   box-shadow: var(--shadow-sm);
 }
 
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.user-avatar .material-icons {
+  font-size: 24px;
+}
+
 .date-filter-collapse {
   padding: 0.5rem 0.75rem 0.5rem 4rem;
   animation: slideDown 0.3s ease-out;

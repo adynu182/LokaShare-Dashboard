@@ -39,11 +39,11 @@ export default function PeopleView({ users, selectedUser, onSelectUser, allLocat
                   className={cn("user-card", isSelected && "active")}
                   style={isSelected ? { borderColor: userColor } : {}}
                 >
-                  <div 
-                    className="user-avatar" 
+                  <div
+                    className="user-avatar"
                     style={{ backgroundColor: userColor }}
                   >
-                    {user.charAt(0).toUpperCase()}
+                    <span className="material-icons">person</span>
                   </div>
                   <div className="user-info">
                     <span className="user-name">{user}</span>
