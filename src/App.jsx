@@ -1,143 +1,140 @@
 import React, { useState, useEffect } from 'react';
-import Header from './components/Header';
-import UserSelector from './components/UserSelector';
-import MapView from './components/MapView';
-import BottomPanel from './components/BottomPanel';
-import Toast from './components/Toast';
 import { useLocations } from './hooks/useLocations';
-import { getTimestampMs, getLocalDateKey, formatLocalDate } from './utils/helpers';
+import { getLocalDateKey } from './utils/helpers';
 import { deleteUserLocations } from './utils/deleteUserData';
+import StatsHeader from './components/StatsHeader';
+import BottomNav from './components/BottomNav';
+import MainSheet from './components/MainSheet';
+import MapCanvas from './components/MapCanvas';
+import PeopleView from './views/PeopleView';
+import TimelineView from './views/TimelineView';
+import ManageView from './views/ManageView';
+import ModernToast from './components/ModernToast';
 import './App.css';
 
 export default function App() {
   const { allLocations, users, loading, error, connectionStatus } = useLocations();
   
-  // Generate unique date keys from all locations
+  // State
+  const [activeTab, setActiveTab] = useState('map');
+  const [selectedUser, setSelectedUser] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
+  const [activeIndex, setActiveIndex] = useState(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [toast, setToast] = useState({ message: '', type: 'info' });
+
+  // Computed
   const dates = [
     ...new Set(
       allLocations.map((loc) => getLocalDateKey(loc.localTimestamp)).filter(Boolean)
     ),
   ].sort((a, b) => b.localeCompare(a));
 
-  const [selectedUser, setSelectedUser] = useState('');
-  const [selectedDate, setSelectedDate] = useState('');
-  const [panelState, setPanelState] = useState('peek'); // 'collapsed' | 'peek' | 'expanded'
-  const [activeMapIndex, setActiveMapIndex] = useState(null);
-  const [toastMessage, setToastMessage] = useState('');
+  const filteredLocations = allLocations
+    .filter(loc => !selectedUser || loc.userName === selectedUser)
+    .filter(loc => !selectedDate || getLocalDateKey(loc.localTimestamp) === selectedDate);
 
-  // Auto-select first user and first date on load
+  const latestLocation = filteredLocations[0];
+
+  // Auto-select initial data
   useEffect(() => {
     if (!loading) {
-      if (!selectedUser && users.length > 0) {
-        setSelectedUser(users[0]);
-      }
-      if (!selectedDate && dates.length > 0) {
-        setSelectedDate(dates[0]);
-      }
+      if (!selectedUser && users.length > 0) setSelectedUser(users[0]);
+      if (!selectedDate && dates.length > 0) setSelectedDate(dates[0]);
     }
-  }, [loading, users, dates, selectedUser, selectedDate]);
+  }, [loading, users, dates]);
 
-  // Auto toast on new location records or filter change
-  useEffect(() => {
-    if (allLocations.length > 0 && !loading) {
-      triggerToast(`${allLocations.length} titik lokasi aktif dimuat`);
-    }
-  }, [allLocations.length, loading]);
+  // Handlers
+  const triggerToast = (message, type = 'info') => setToast({ message, type });
 
   const handleSelectUser = (user) => {
     setSelectedUser(user);
-    setActiveMapIndex(null); // Reset focus
-    if (user) {
-      triggerToast(`Menampilkan lokasi: ${user}`);
-    }
-  };
-
-  const handleSelectDate = (date) => {
-    setSelectedDate(date);
-    setActiveMapIndex(null); // Reset focus
-    if (date) {
-      triggerToast(`Menampilkan tanggal: ${formatLocalDate(date)}`);
-    }
-  };
-
-  const triggerToast = (message) => {
-    setToastMessage(message);
+    setActiveIndex(null);
+    setActiveTab('map');
+    setIsSheetOpen(false);
+    triggerToast(`Melihat lokasi ${user}`, 'info');
   };
 
   const handleDeleteUser = async (userName) => {
     const result = await deleteUserLocations(userName);
-    
     if (result.success) {
-      triggerToast(`✅ Berhasil menghapus ${result.deletedCount} data lokasi untuk ${userName}`);
-      // Reset selected user to avoid confusion
+      triggerToast(`Berhasil menghapus data ${userName}`, 'success');
       setSelectedUser('');
     } else {
-      triggerToast(`❌ Gagal menghapus data: ${result.error}`);
+      triggerToast(`Gagal: ${result.error}`, 'error');
     }
   };
 
-  const handleCardClick = (index) => {
-    setActiveMapIndex(index);
-    // Bring panel down slightly to view map comfortably on click
-    if (panelState === 'expanded') {
-      setPanelState('peek');
-    }
+  const handleMarkerClick = (index) => {
+    setActiveIndex(index);
+    if (!isSheetOpen) setIsSheetOpen(true);
+    setActiveTab('timeline');
   };
-
-  // Filter locations
-  let filteredLocations = [...allLocations];
-  if (selectedUser) {
-    filteredLocations = filteredLocations.filter(loc => loc.userName === selectedUser);
-  }
-  if (selectedDate) {
-    filteredLocations = filteredLocations.filter(
-      loc => getLocalDateKey(loc.localTimestamp) === selectedDate
-    );
-  }
-
-  // Sort locations: Newest first
-  filteredLocations.sort((a, b) => getTimestampMs(b) - getTimestampMs(a));
-  const headerDeviceModel = filteredLocations[0]?.deviceModel || '';
 
   return (
     <div className="app-container">
-      {/* Top Header Overlay */}
-      <Header 
+      {/* Background Map */}
+      <MapCanvas 
+        locations={filteredLocations}
+        selectedUser={selectedUser}
+        activeIndex={activeIndex}
+        onMarkerClick={handleMarkerClick}
+      />
+
+      {/* Floating Header */}
+      <StatsHeader 
         connectionStatus={connectionStatus}
         selectedUser={selectedUser}
-        onDeleteUser={handleDeleteUser}
-        deviceModel={headerDeviceModel}
+        latestLocation={latestLocation}
       />
 
-      {/* Floating User & Date Filters */}
-      <UserSelector 
-        users={users} 
-        selectedUser={selectedUser} 
-        onSelectUser={handleSelectUser}
-        dates={dates}
-        selectedDate={selectedDate}
-        onSelectDate={handleSelectDate}
-      />
+      {/* Interactive Bottom Sheet */}
+      <MainSheet 
+        isOpen={isSheetOpen} 
+        setIsOpen={setIsSheetOpen}
+        title={
+          activeTab === 'people' ? 'Daftar Orang' :
+          activeTab === 'timeline' ? `Riwayat ${selectedUser}` :
+          activeTab === 'manage' ? 'Pengaturan' : 'Detail Lokasi'
+        }
+      >
+        {activeTab === 'people' && (
+          <PeopleView 
+            users={users} 
+            selectedUser={selectedUser} 
+            onSelectUser={handleSelectUser} 
+          />
+        )}
+        {(activeTab === 'timeline' || activeTab === 'map') && (
+          <TimelineView 
+            locations={filteredLocations}
+            dates={dates}
+            selectedDate={selectedDate}
+            onSelectDate={setSelectedDate}
+            activeIndex={activeIndex}
+            onCardClick={setActiveIndex}
+          />
+        )}
+        {activeTab === 'manage' && (
+          <ManageView 
+            users={users} 
+            onDeleteUser={handleDeleteUser} 
+          />
+        )}
+      </MainSheet>
 
-      {/* Fullscreen Map Background */}
-      <MapView 
-        locations={filteredLocations}
-        selectedUser={selectedUser}
-        onMarkerClick={handleCardClick}
-        activeMapIndex={activeMapIndex}
-      />
+      {/* Navigation Hub */}
+      <BottomNav activeTab={activeTab} setActiveTab={(tab) => {
+        setActiveTab(tab);
+        if (tab !== 'map') setIsSheetOpen(true);
+      }} />
 
-      {/* Collapsible Bottom Panel */}
-      <BottomPanel 
-        locations={filteredLocations}
-        panelState={panelState}
-        setPanelState={setPanelState}
-        onCardClick={handleCardClick}
-        loading={loading}
+      {/* Notifications */}
+      <ModernToast 
+        message={toast.message} 
+        type={toast.type} 
+        onClose={() => setToast({ ...toast, message: '' })} 
       />
-
-      {/* Notification Toast */}
-      <Toast message={toastMessage} />
     </div>
   );
 }
