@@ -112,7 +112,13 @@ export default function App() {
         }
       >
         {activeTab === 'map' && (
-          <PetaView locations={filteredLocations} />
+          <PetaView 
+            locations={filteredLocations} 
+            onSelectLocation={(index) => {
+              setActiveIndex(index);
+              setIsSheetOpen(false); // Close sheet to show map focus
+            }}
+          />
         )}
         {activeTab === 'people' && (
           <PeopleView 
