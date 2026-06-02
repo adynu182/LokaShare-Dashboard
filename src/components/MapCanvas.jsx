@@ -77,17 +77,20 @@ export default function MapCanvas({ locations, selectedUser, activeIndex, onMark
       const isLatest = i === 0;
       const isActive = activeIndex === i;
       const color = getUserColor(loc.userName);
+      const sequenceNumber = locations.length - i;
       
       const icon = L.divIcon({
         className: 'custom-marker',
         html: `
           <div class="marker-dot-wrapper">
             ${isLatest ? `<div class="marker-pulse" style="color: ${color}"></div>` : ''}
-            <div class="marker-dot ${isActive ? 'active' : ''}" style="background-color: ${color}"></div>
+            <div class="marker-dot ${isActive ? 'active' : ''}" style="background-color: ${color}">
+              <span class="marker-number">${sequenceNumber}</span>
+            </div>
           </div>
         `,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12]
+        iconSize: [30, 30],
+        iconAnchor: [15, 15]
       });
 
       const marker = L.marker([loc.latitude, loc.longitude], { icon })

@@ -78,20 +78,41 @@ body {
   justify-content: center;
 }
 
+.marker-dot-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
 .marker-dot {
-  width: 12px;
-  height: 12px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   border: 2px solid white;
   box-shadow: var(--shadow-sm);
   transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
 }
 
 .marker-dot.active {
-  width: 18px;
-  height: 18px;
-  transform: scale(1.2);
+  width: 24px;
+  height: 24px;
+  transform: scale(1.1);
   z-index: 1000;
+  font-size: 12px;
+}
+
+.marker-number {
+  pointer-events: none;
+  line-height: 1;
 }
 
 .marker-pulse {
