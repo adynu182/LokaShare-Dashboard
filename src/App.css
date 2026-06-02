@@ -576,6 +576,61 @@ html, body, #root {
   letter-spacing: -0.2px;
 }
 
+/* Address Section Styles */
+.loc-card-address-container {
+  margin-bottom: 10px;
+}
+
+.address-btn {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: var(--accent-blue);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.address-btn:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+  transform: translateY(-1px);
+}
+
+.address-loading {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-style: italic;
+}
+
+.address-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(59, 130, 246, 0.2);
+  border-top-color: var(--accent-blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.address-text {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--accent-blue);
+}
+
 .loc-card-meta {
   display: flex;
   gap: 6px;
