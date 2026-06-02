@@ -2,12 +2,38 @@ import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { getUserColor } from '../utils/markerColors';
+import { formatTimestamp } from '../utils/helpers';
 
 export default function MapCanvas({ locations, selectedUser, activeIndex, onMarkerClick }) {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
   const markersLayer = useRef(L.layerGroup());
   const polylineLayer = useRef(null);
+
+  // Global handler for reverse geocoding
+  useEffect(() => {
+    window.lookupAddress = async (id, lat, lon) => {
+      const btn = document.querySelector(`#address-${id} .btn-lookup`);
+      if (btn) btn.disabled = true;
+      if (btn) btn.innerText = 'Mencari...';
+
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=geojson&lat=${lat}&lon=${lon}&layer=address`);
+        const data = await response.json();
+        const address = data.features[0].properties.display_name;
+        const container = document.getElementById(`address-${id}`);
+        if (container) {
+          container.innerHTML = `<div class="address-text">${address}</div>`;
+        }
+      } catch (error) {
+        console.error('Error fetching address:', error);
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = 'Gagal, coba lagi';
+        }
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!mapRef.current || mapInstance.current) return;
@@ -17,11 +43,12 @@ export default function MapCanvas({ locations, selectedUser, activeIndex, onMark
       attributionControl: false
     }).setView([-6.2, 106.8], 12);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      maxZoom: 20
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    L.control.zoom({ position: 'topright' }).addTo(map);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
     markersLayer.current.addTo(map);
     mapInstance.current = map;
 
@@ -64,7 +91,23 @@ export default function MapCanvas({ locations, selectedUser, activeIndex, onMark
       });
 
       const marker = L.marker([loc.latitude, loc.longitude], { icon })
-        .on('click', () => onMarkerClick(i))
+        .on('click', (e) => {
+          onMarkerClick(i);
+        })
+        .bindPopup(`
+          <div class="popup-content">
+            <div class="popup-item"><strong>Waktu:</strong> ${formatTimestamp(loc.localTimestamp)}</div>
+            <div class="popup-item"><strong>Perangkat:</strong> ${loc.deviceModel || 'N/A'}</div>
+            <div class="popup-item"><strong>Akurasi:</strong> ${Math.round(loc.accuracy)}m</div>
+            <div class="popup-item"><strong>Baterai:</strong> ${loc.battery !== undefined ? loc.battery + '%' : 'N/A'}</div>
+            <div id="address-${loc.id}" class="popup-address">
+              <button class="btn-lookup" onclick="window.lookupAddress('${loc.id}', ${loc.latitude}, ${loc.longitude})">Lihat Alamat</button>
+            </div>
+          </div>
+        `, {
+          className: 'custom-popup',
+          minWidth: 200
+        })
         .addTo(markersLayer.current);
       
       latLngs.push([loc.latitude, loc.longitude]);

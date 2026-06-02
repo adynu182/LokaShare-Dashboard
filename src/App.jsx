@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useLocations } from './hooks/useLocations';
-import { getLocalDateKey } from './utils/helpers';
 import { deleteUserLocations } from './utils/deleteUserData';
 import StatsHeader from './components/StatsHeader';
 import BottomNav from './components/BottomNav';
 import MainSheet from './components/MainSheet';
 import MapCanvas from './components/MapCanvas';
 import PeopleView from './views/PeopleView';
-import TimelineView from './views/TimelineView';
 import ManageView from './views/ManageView';
 import ModernToast from './components/ModernToast';
 import './App.css';
@@ -18,21 +16,12 @@ export default function App() {
   // State
   const [activeTab, setActiveTab] = useState('map');
   const [selectedUser, setSelectedUser] = useState('');
-  const [selectedDate, setSelectedDate] = useState('');
   const [activeIndex, setActiveIndex] = useState(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [toast, setToast] = useState({ message: '', type: 'info' });
 
-  // Computed
-  const dates = [
-    ...new Set(
-      allLocations.map((loc) => getLocalDateKey(loc.localTimestamp)).filter(Boolean)
-    ),
-  ].sort((a, b) => b.localeCompare(a));
-
   const filteredLocations = allLocations
-    .filter(loc => !selectedUser || loc.userName === selectedUser)
-    .filter(loc => !selectedDate || getLocalDateKey(loc.localTimestamp) === selectedDate);
+    .filter(loc => !selectedUser || loc.userName === selectedUser);
 
   const latestLocation = filteredLocations[0];
 
@@ -40,9 +29,8 @@ export default function App() {
   useEffect(() => {
     if (!loading) {
       if (!selectedUser && users.length > 0) setSelectedUser(users[0]);
-      if (!selectedDate && dates.length > 0) setSelectedDate(dates[0]);
     }
-  }, [loading, users, dates]);
+  }, [loading, users]);
 
   // Handlers
   const triggerToast = (message, type = 'info') => setToast({ message, type });
@@ -67,8 +55,7 @@ export default function App() {
 
   const handleMarkerClick = (index) => {
     setActiveIndex(index);
-    if (!isSheetOpen) setIsSheetOpen(true);
-    setActiveTab('timeline');
+    // Don't open sheet, data is in popup
   };
 
   return (
@@ -94,7 +81,6 @@ export default function App() {
         setIsOpen={setIsSheetOpen}
         title={
           activeTab === 'people' ? 'Daftar Orang' :
-          activeTab === 'timeline' ? `Riwayat ${selectedUser}` :
           activeTab === 'manage' ? 'Pengaturan' : 'Detail Lokasi'
         }
       >
@@ -103,16 +89,6 @@ export default function App() {
             users={users} 
             selectedUser={selectedUser} 
             onSelectUser={handleSelectUser} 
-          />
-        )}
-        {(activeTab === 'timeline' || activeTab === 'map') && (
-          <TimelineView 
-            locations={filteredLocations}
-            dates={dates}
-            selectedDate={selectedDate}
-            onSelectDate={setSelectedDate}
-            activeIndex={activeIndex}
-            onCardClick={setActiveIndex}
           />
         )}
         {activeTab === 'manage' && (
@@ -126,7 +102,11 @@ export default function App() {
       {/* Navigation Hub */}
       <BottomNav activeTab={activeTab} setActiveTab={(tab) => {
         setActiveTab(tab);
-        if (tab !== 'map') setIsSheetOpen(true);
+        if (tab === 'map') {
+          setIsSheetOpen(false);
+        } else {
+          setIsSheetOpen(true);
+        }
       }} />
 
       {/* Notifications */}

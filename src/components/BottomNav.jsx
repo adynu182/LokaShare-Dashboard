@@ -1,12 +1,11 @@
 import React from 'react';
-import { Map, Users, Clock, Settings } from 'lucide-react';
+import { Map, Users, Settings } from 'lucide-react';
 import { cn } from '../utils/cn';
 
 export default function BottomNav({ activeTab, setActiveTab }) {
   const tabs = [
     { id: 'map', icon: Map, label: 'Peta' },
     { id: 'people', icon: Users, label: 'Orang' },
-    { id: 'timeline', icon: Clock, label: 'Riwayat' },
     { id: 'manage', icon: Settings, label: 'Atur' },
   ];
 
