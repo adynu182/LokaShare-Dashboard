@@ -30,15 +30,18 @@ export default function PeopleView({ users, selectedUser, onSelectUser, allLocat
             const isSelected = selectedUser === user;
             const userDates = isSelected ? getUserDates(user) : [];
             
+            const userColor = getUserColor(user);
+            
             return (
               <div key={user} className="user-card-wrapper">
                 <button
                   onClick={() => onSelectUser(user)}
                   className={cn("user-card", isSelected && "active")}
+                  style={isSelected ? { borderColor: userColor } : {}}
                 >
                   <div 
                     className="user-avatar" 
-                    style={{ backgroundColor: getUserColor(user) }}
+                    style={{ backgroundColor: userColor }}
                   >
                     {user.charAt(0).toUpperCase()}
                   </div>
@@ -47,7 +50,8 @@ export default function PeopleView({ users, selectedUser, onSelectUser, allLocat
                   </div>
                   <ChevronRight 
                     size={20} 
-                    className={cn("text-muted-foreground transition-transform", isSelected && "rotate-90")} 
+                    className={cn("transition-transform", isSelected && "rotate-90")} 
+                    style={{ color: userColor }}
                   />
                 </button>
 
@@ -58,6 +62,7 @@ export default function PeopleView({ users, selectedUser, onSelectUser, allLocat
                       <button
                         onClick={() => onSelectDate('')}
                         className={cn("date-pill", !selectedDate && "active")}
+                        style={!selectedDate ? { backgroundColor: userColor, borderColor: userColor } : {}}
                       >
                         Semua
                       </button>
@@ -66,6 +71,7 @@ export default function PeopleView({ users, selectedUser, onSelectUser, allLocat
                           key={date}
                           onClick={() => onSelectDate(date)}
                           className={cn("date-pill", selectedDate === date && "active")}
+                          style={selectedDate === date ? { backgroundColor: userColor, borderColor: userColor } : {}}
                         >
                           <Calendar size={14} />
                           {date}
