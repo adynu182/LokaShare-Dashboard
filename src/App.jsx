@@ -26,7 +26,11 @@ export default function App() {
     .filter(loc => {
       if (!selectedDate) return true;
       if (!loc.timestamp) return false;
-      const date = new Date(loc.timestamp.seconds * 1000).toLocaleDateString('id-ID');
+      const date = new Date(loc.timestamp.seconds * 1000).toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
       return date === selectedDate;
     });
 

@@ -8,7 +8,11 @@ export default function PeopleView({ users, selectedUser, onSelectUser, allLocat
   const getUserDates = (userName) => {
     const userLocs = allLocations.filter(loc => loc.userName === userName && loc.timestamp);
     const dates = userLocs.map(loc => 
-      new Date(loc.timestamp.seconds * 1000).toLocaleDateString('id-ID')
+      new Date(loc.timestamp.seconds * 1000).toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      })
     );
     return [...new Set(dates)];
   };
@@ -40,9 +44,6 @@ export default function PeopleView({ users, selectedUser, onSelectUser, allLocat
                   </div>
                   <div className="user-info">
                     <span className="user-name">{user}</span>
-                    <span className="user-status">
-                      {isSelected ? 'Pilih tanggal untuk melihat detail' : 'Klik untuk melihat lokasi'}
-                    </span>
                   </div>
                   <ChevronRight 
                     size={20} 
