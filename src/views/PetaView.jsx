@@ -30,9 +30,9 @@ export default function PetaView({ locations, onSelectLocation }) {
                   {locations.length - index}.
                 </span>
                 <span className="timeline-time">
-                  {loc.timestamp?.seconds 
+                  {loc.localTimestamp 
                     ? (() => {
-                        const date = new Date(loc.timestamp.seconds * 1000);
+                        const date = new Date(loc.localTimestamp);
                         const dateStr = date.toLocaleDateString('id-ID', {
                           day: 'numeric',
                           month: 'long',
@@ -46,6 +46,9 @@ export default function PetaView({ locations, onSelectLocation }) {
                       })()
                     : 'N/A'}
                 </span>
+              </div>
+              <div className="timeline-details" style={{ fontSize: '0.8rem', color: 'var(--muted-foreground)', marginLeft: '1.5rem', marginTop: '4px' }}>
+                Sumber: {loc.source || 'N/A'}
               </div>
             </div>
           </div>
