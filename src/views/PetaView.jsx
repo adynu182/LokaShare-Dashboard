@@ -47,18 +47,24 @@ export default function PetaView({ locations, onSelectLocation }) {
                     : 'N/A'}
                 </span>
               </div>
-              <div className="timeline-details" style={{ marginLeft: '1.5rem', marginTop: '4px' }}>
-                <div className="detail-item">
-                  <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>Sumber:</span>
-                  <span>{loc.source || 'N/A'}</span>
-                </div>
-                <div className="detail-item">
-                  <Battery size={14} />
-                  <span>Baterai: {loc.battery !== undefined ? `${loc.battery}%` : 'N/A'}</span>
-                </div>
-                <div className="detail-item">
-                  <Crosshair size={14} />
-                  <span>Akurasi: {loc.accuracy !== undefined ? `${Math.round(loc.accuracy)}m` : 'N/A'}</span>
+              <div className="timeline-details" style={{ marginLeft: '1.5rem', marginTop: '6px' }}>
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>Sumber:</span>
+                    <span>{loc.source || 'N/A'}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>Waktu:</span>
+                    <span>{loc.localTimestamp ? new Date(loc.localTimestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(/:/g, '.') : 'N/A'}</span>
+                  </div>
+                  <div className="detail-item">
+                    <Battery size={14} />
+                    <span>Baterai: {loc.battery !== undefined ? `${loc.battery}%` : 'N/A'}</span>
+                  </div>
+                  <div className="detail-item">
+                    <Crosshair size={14} />
+                    <span>Akurasi: {loc.accuracy !== undefined ? `${Math.round(loc.accuracy)}m` : 'N/A'}</span>
+                  </div>
                 </div>
               </div>
             </div>
