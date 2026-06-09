@@ -25,6 +25,11 @@ export default function PetaView({ locations, onSelectLocation }) {
             style={{ cursor: 'pointer', padding: '0.75rem 0' }}
           >
             <div className="timeline-content" style={{ padding: '0.75rem 1rem' }}>
+              <div className="timeline-header" style={{ display: 'flex', gap: '8px' }}>
+                <span className="timeline-time" style={{ fontWeight: '700' }}>
+                  {locations.length - index}.
+                </span>
+              </div>
               <div className="timeline-details" style={{ marginLeft: '1.5rem', marginTop: '6px' }}>
                 <div className="detail-grid">
                   <div className="detail-item">
