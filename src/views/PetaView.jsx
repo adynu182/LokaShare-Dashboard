@@ -29,7 +29,6 @@ export default function PetaView({ locations, onSelectLocation }) {
                 <span className="timeline-time" style={{ fontWeight: '700' }}>
                   {locations.length - index}.
                 </span>
-              </div>
               <div className="timeline-details" style={{ marginLeft: '1.5rem', marginTop: '6px' }}>
                 <div className="detail-grid">
                   <div className="detail-item">
@@ -61,6 +60,7 @@ export default function PetaView({ locations, onSelectLocation }) {
                   <div className="detail-item">
                     <Crosshair size={14} />
                     <span>Akurasi: {loc.accuracy !== undefined ? `${Math.round(loc.accuracy)}m` : 'N/A'}</span>
+                  </div>
                   </div>
                 </div>
               </div>
