@@ -25,10 +25,6 @@ export default function PetaView({ locations, onSelectLocation }) {
             style={{ cursor: 'pointer', padding: '0.75rem 0' }}
           >
             <div className="timeline-content" style={{ padding: '0.75rem 1rem' }}>
-              <div className="timeline-header" style={{ display: 'flex', gap: '8px' }}>
-                <span className="timeline-time" style={{ fontWeight: '700' }}>
-                  {locations.length - index}.
-                </span>
               <div className="timeline-details" style={{ marginLeft: '1.5rem', marginTop: '6px' }}>
                 <div className="detail-grid">
                   <div className="detail-item">
@@ -37,21 +33,21 @@ export default function PetaView({ locations, onSelectLocation }) {
                   </div>
                   <div className="detail-item">
                     <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>Waktu:</span>
-                      <span>{loc.localTimestamp 
-                      ? (() => {
-                          const date = new Date(loc.localTimestamp);
-                          const dateStr = date.toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric'
-                          });
-                          const timeStr = date.toLocaleTimeString('id-ID', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          }).replace(/:/g, '.');
-                          return `${dateStr}, ${timeStr}`;
-                        })()
-                      : 'N/A'}</span>
+                    <span>{loc.localTimestamp 
+                    ? (() => {
+                        const date = new Date(loc.localTimestamp);
+                        const dateStr = date.toLocaleDateString('id-ID', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
+                        });
+                        const timeStr = date.toLocaleTimeString('id-ID', {
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }).replace(/:/g, '.');
+                        return `${dateStr}, ${timeStr}`;
+                      })()
+                    : 'N/A'}</span>
                   </div>
                   <div className="detail-item">
                     <Battery size={14} />
