@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin } from 'lucide-react';
+import { Battery, Crosshair, MapPin } from 'lucide-react';
 
 export default function PetaView({ locations, onSelectLocation }) {
   return (
@@ -47,8 +47,19 @@ export default function PetaView({ locations, onSelectLocation }) {
                     : 'N/A'}
                 </span>
               </div>
-              <div className="timeline-details" style={{ fontSize: '0.8rem', color: 'var(--muted-foreground)', marginLeft: '1.5rem', marginTop: '4px' }}>
-                Sumber: {loc.source || 'N/A'}
+              <div className="timeline-details" style={{ marginLeft: '1.5rem', marginTop: '4px' }}>
+                <div className="detail-item">
+                  <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>Sumber:</span>
+                  <span>{loc.source || 'N/A'}</span>
+                </div>
+                <div className="detail-item">
+                  <Battery size={14} />
+                  <span>Baterai: {loc.battery !== undefined ? `${loc.battery}%` : 'N/A'}</span>
+                </div>
+                <div className="detail-item">
+                  <Crosshair size={14} />
+                  <span>Akurasi: {loc.accuracy !== undefined ? `${Math.round(loc.accuracy)}m` : 'N/A'}</span>
+                </div>
               </div>
             </div>
           </div>
