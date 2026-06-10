@@ -36,7 +36,6 @@ export default function PetaView({ locations, onSelectLocation }) {
                     <span>{loc.source || 'N/A'}</span>
                   </div>
                   <div className="detail-item">
-                    <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>Waktu:</span>
                     <span>{loc.localTimestamp 
                     ? (() => {
                         const date = new Date(loc.localTimestamp);
