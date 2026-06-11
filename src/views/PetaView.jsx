@@ -32,7 +32,6 @@ export default function PetaView({ locations, onSelectLocation }) {
               <div className="timeline-details" style={{ marginLeft: '1.5rem', marginTop: '6px' }}>
                 <div className="detail-grid">
                   <div className="detail-item">
-                    <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>Sumber:</span>
                     <span>{loc.source || 'N/A'}</span>
                   </div>
                   <div className="detail-item">
