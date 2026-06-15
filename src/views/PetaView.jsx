@@ -41,7 +41,7 @@ export default function PetaView({ locations, onSelectLocation }) {
                           const dateStr = date.toLocaleDateString('id-ID', {
                             day: 'numeric',
                             month: 'long',
-                            year: 'numeric'
+                            year: '2-digit'
                           });
                           const timeStr = date.toLocaleTimeString('id-ID', {
                             hour: '2-digit',
