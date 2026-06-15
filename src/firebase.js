@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBTfRVVqqnOUaC3F2ntrhtEuHTopzGWi18",
-  authDomain: "gpsliveapp.firebaseapp.com",
-  databaseURL: "https://gpsliveapp-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "gpsliveapp",
-  storageBucket: "gpsliveapp.firebasestorage.app",
-  messagingSenderId: "376250786424",
-  appId: "1:376250786424:web:697514b3e040827af3038d"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);
