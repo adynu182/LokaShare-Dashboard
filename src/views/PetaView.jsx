@@ -1,5 +1,5 @@
 import React from 'react';
-import { Battery, Crosshair, MapPin } from 'lucide-react';
+import { Battery, Crosshair, MapPin, Clock, Satellite } from 'lucide-react';
 
 export default function PetaView({ locations, onSelectLocation }) {
   return (
@@ -16,20 +16,20 @@ export default function PetaView({ locations, onSelectLocation }) {
         Jumlah Lokasi Tercatat : {locations.length}
       </div>
 
-      <div className="timeline-list">
+      <div className="map-list">
         {locations.map((loc, index) => (
           <div
             key={loc.id}
-            className="timeline-item"
+            className="map-item"
             onClick={() => onSelectLocation(index)}
             style={{ cursor: 'pointer', padding: '0.75rem 0' }}
           >
-            <div className="timeline-content" style={{ padding: '0.75rem 1rem' }}>
-              <div className="timeline-header" style={{ display: 'flex', gap: '8px' }}>
-                <span className="timeline-time" style={{ fontWeight: '700' }}>
+            <div className="map-content" style={{ padding: '0.75rem 1rem' }}>
+              <div className="map-header" style={{ display: 'flex', gap: '8px' }}>
+                <span className="map-time" style={{ fontWeight: '700', display: 'flex', alignItems: 'center' }}>
                   {locations.length - index}.
                 </span>
-                <div className="timeline-details" style={{ marginRight: '1.5rem', marginTop: '6px' }}>
+                <div className="map-details" style={{ marginTop: '6px' }}>
                   <div className="detail-grid">
                     <div className="detail-item">
                       <span>{loc.source || 'N/A'}</span>
@@ -53,11 +53,19 @@ export default function PetaView({ locations, onSelectLocation }) {
                     </div>
                     <div className="detail-item">
                       <Battery size={14} />
-                      <span>Baterai: {loc.battery !== undefined ? `${loc.battery}%` : 'N/A'}</span>
+                      <span>Diam: {loc.isStationary !== undefined ? `${loc.isStationary}` : 'N/A'}</span>
                     </div>
                     <div className="detail-item">
                       <Crosshair size={14} />
                       <span>Akurasi: {loc.accuracy !== undefined ? `${Math.round(loc.accuracy)}m` : 'N/A'}</span>
+                    </div>
+                    <div className="detail-item">
+                      <Clock size={14} />
+                      <span>Age: {loc.ageMs !== undefined ? loc.ageMs : 'N/A'}</span>
+                    </div>
+                    <div className="detail-item">
+                      <Satellite size={14} />
+                      <span>Satelit: {loc.satellitesUsed !== undefined ? loc.satellitesUsed : 'N/A'}</span>
                     </div>
                   </div>
                 </div>

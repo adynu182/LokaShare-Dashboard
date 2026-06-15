@@ -13,7 +13,7 @@ import './App.css';
 
 export default function App() {
   const { allLocations, users, loading, error, connectionStatus } = useLocations();
-  
+
   // State
   const [activeTab, setActiveTab] = useState('map');
   const [selectedUser, setSelectedUser] = useState('');
@@ -86,7 +86,7 @@ export default function App() {
   return (
     <div className="app-container">
       {/* Background Map */}
-      <MapCanvas 
+      <MapCanvas
         locations={filteredLocations}
         selectedUser={selectedUser}
         activeIndex={activeIndex}
@@ -94,24 +94,24 @@ export default function App() {
       />
 
       {/* Floating Header */}
-      <StatsHeader 
+      <StatsHeader
         connectionStatus={connectionStatus}
         selectedUser={selectedUser}
         latestLocation={latestLocation}
       />
 
       {/* Interactive Bottom Sheet */}
-      <MainSheet 
-        isOpen={isSheetOpen} 
+      <MainSheet
+        isOpen={isSheetOpen}
         setIsOpen={setIsSheetOpen}
         title={
           activeTab === 'people' ? 'Daftar Orang' :
-          activeTab === 'manage' ? 'Pengaturan' : 'Daftar Lokasi'
+            activeTab === 'manage' ? 'Pengaturan' : 'Daftar Lokasi'
         }
       >
         {activeTab === 'map' && (
-          <PetaView 
-            locations={filteredLocations} 
+          <PetaView
+            locations={filteredLocations}
             onSelectLocation={(index) => {
               setActiveIndex(index);
               setIsSheetOpen(false); // Close sheet to show map focus
@@ -119,9 +119,9 @@ export default function App() {
           />
         )}
         {activeTab === 'people' && (
-          <PeopleView 
-            users={users} 
-            selectedUser={selectedUser} 
+          <PeopleView
+            users={users}
+            selectedUser={selectedUser}
             onSelectUser={handleSelectUser}
             allLocations={allLocations}
             selectedDate={selectedDate}
@@ -129,9 +129,9 @@ export default function App() {
           />
         )}
         {activeTab === 'manage' && (
-          <ManageView 
-            users={users} 
-            onDeleteUser={handleDeleteUser} 
+          <ManageView
+            users={users}
+            onDeleteUser={handleDeleteUser}
           />
         )}
       </MainSheet>
@@ -143,10 +143,10 @@ export default function App() {
       }} />
 
       {/* Notifications */}
-      <ModernToast 
-        message={toast.message} 
-        type={toast.type} 
-        onClose={() => setToast({ ...toast, message: '' })} 
+      <ModernToast
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast({ ...toast, message: '' })}
       />
     </div>
   );

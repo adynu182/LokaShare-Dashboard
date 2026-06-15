@@ -7,7 +7,7 @@ export default function PeopleView({ users, selectedUser, onSelectUser, allLocat
   // Get unique dates for a specific user
   const getUserDates = (userName) => {
     const userLocs = allLocations.filter(loc => loc.userName === userName && loc.timestamp);
-    const dates = userLocs.map(loc => 
+    const dates = userLocs.map(loc =>
       new Date(loc.timestamp.seconds * 1000).toLocaleDateString('id-ID', {
         day: 'numeric',
         month: 'long',
@@ -29,9 +29,9 @@ export default function PeopleView({ users, selectedUser, onSelectUser, allLocat
           users.map((user) => {
             const isSelected = selectedUser === user;
             const userDates = isSelected ? getUserDates(user) : [];
-            
+
             const userColor = getUserColor(user);
-            
+
             return (
               <div key={user} className="user-card-wrapper">
                 <button
@@ -48,9 +48,9 @@ export default function PeopleView({ users, selectedUser, onSelectUser, allLocat
                   <div className="user-info">
                     <span className="user-name">{user}</span>
                   </div>
-                  <ChevronRight 
-                    size={20} 
-                    className={cn("transition-transform", isSelected && "rotate-90")} 
+                  <ChevronRight
+                    size={20}
+                    className={cn("transition-transform", isSelected && "rotate-90")}
                     style={{ color: userColor }}
                   />
                 </button>

@@ -73,12 +73,12 @@ export default function MapCanvas({ locations, selectedUser, activeIndex, onMark
     const latLngs = [];
     locations.forEach((loc, i) => {
       if (!loc.latitude || !loc.longitude) return;
-      
+
       const isLatest = i === 0;
       const isActive = activeIndex === i;
       const color = getUserColor(loc.userName);
       const sequenceNumber = locations.length - i;
-      
+
       const icon = L.divIcon({
         className: 'custom-marker',
         html: `
@@ -112,7 +112,7 @@ export default function MapCanvas({ locations, selectedUser, activeIndex, onMark
           minWidth: 200
         })
         .addTo(markersLayer.current);
-      
+
       latLngs.push([loc.latitude, loc.longitude]);
     });
 

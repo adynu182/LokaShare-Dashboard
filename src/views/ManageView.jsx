@@ -15,20 +15,20 @@ export default function ManageView({ users, onDeleteUser }) {
       <div className="manage-section">
         <h3 className="section-title">Manajemen Data</h3>
         <p className="section-desc">Hapus riwayat lokasi untuk pengguna tertentu.</p>
-        
+
         <div className="delete-list">
           {users.map((user) => (
             <div key={user} className="delete-card">
               <span className="user-name">{user}</span>
               {confirmDelete === user ? (
                 <div className="confirm-actions">
-                  <button 
+                  <button
                     onClick={() => setConfirmDelete(null)}
                     className="btn-cancel"
                   >
                     Batal
                   </button>
-                  <button 
+                  <button
                     onClick={() => handleDelete(user)}
                     className="btn-delete-confirm"
                   >
@@ -36,7 +36,7 @@ export default function ManageView({ users, onDeleteUser }) {
                   </button>
                 </div>
               ) : (
-                <button 
+                <button
                   onClick={() => setConfirmDelete(user)}
                   className="btn-delete"
                 >

@@ -11,7 +11,7 @@ export function useLocations() {
 
   useEffect(() => {
     setConnectionStatus('Menghubungkan...');
-    
+
     const locRef = collection(db, 'locations');
     const q = query(locRef, orderBy('timestamp', 'desc'));
 
@@ -22,13 +22,13 @@ export function useLocations() {
           id: doc.id,
           ...doc.data(),
         }));
-        
+
         setAllLocations(locations);
-        
+
         // Extract and sort unique users
         const uniqueUsers = [...new Set(locations.map(l => l.userName).filter(Boolean))].sort();
         setUsers(uniqueUsers);
-        
+
         setLoading(false);
         setConnectionStatus('Terhubung');
         setError(null);
