@@ -4,18 +4,6 @@ import { Battery, Crosshair, MapPin, Clock, Satellite, Car } from 'lucide-react'
 export default function PetaView({ locations, onSelectLocation }) {
   return (
     <div className="view-container">
-      <div className="peta-header" style={{
-        padding: '1rem',
-        background: 'var(--primary)',
-        color: 'white',
-        borderRadius: '12px',
-        marginBottom: '1rem',
-        fontWeight: '700',
-        textAlign: 'center'
-      }}>
-        Jumlah Lokasi Tercatat : {locations.length}
-      </div>
-
       <div className="map-list">
         {locations.map((loc, index) => (
           <div
