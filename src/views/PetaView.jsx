@@ -1,5 +1,5 @@
 import React from 'react';
-import { Battery, Crosshair, MapPin, Clock, Satellite } from 'lucide-react';
+import { Battery, Crosshair, MapPin, Clock, Satellite, Car } from 'lucide-react';
 
 export default function PetaView({ locations, onSelectLocation }) {
   return (
@@ -52,8 +52,8 @@ export default function PetaView({ locations, onSelectLocation }) {
                         : 'N/A'}</span>
                     </div>
                     <div className="detail-item">
-                      <Battery size={14} />
-                      <span>Diam: {loc.isStationary !== undefined ? `${loc.isStationary}` : 'N/A'}</span>
+                      <Car size={14} />
+                      <span>Park: {loc.isStationary !== undefined ? `${loc.isStationary}` : 'N/A'}</span>
                     </div>
                     <div className="detail-item">
                       <Crosshair size={14} />
