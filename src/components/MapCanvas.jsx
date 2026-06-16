@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { getUserColor } from '../utils/markerColors';
+import { getUserColor, darkenColor } from '../utils/markerColors';
 import { formatTimestamp } from '../utils/helpers';
 
 export default function MapCanvas({ locations, selectedUser, activeIndex, onMarkerClick }) {
@@ -76,7 +76,13 @@ export default function MapCanvas({ locations, selectedUser, activeIndex, onMark
 
       const isLatest = i === 0;
       const isActive = activeIndex === i;
-      const color = getUserColor(loc.userName);
+      let color = getUserColor(loc.userName);
+      
+      // Darken color if device is stationary
+      if (loc.isStationary) {
+        color = darkenColor(color, 60); // Use a significant darkening amount
+      }
+      
       const sequenceNumber = locations.length - i;
 
       const icon = L.divIcon({

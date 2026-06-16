@@ -28,3 +28,38 @@ export function getUserColor(userName) {
   const index = Math.abs(hash) % USER_COLORS.length;
   return USER_COLORS[index];
 }
+
+/**
+ * Darken a hex color by a given amount.
+ * @param {string} hex 
+ * @param {number} amount 0-255
+ * @returns {string} darkened hex color
+ */
+export function darkenColor(hex, amount = 40) {
+  if (!hex || hex === 'transparent') return hex;
+  
+  // Remove hash if present
+  const useHash = hex.startsWith('#');
+  const color = useHash ? hex.slice(1) : hex;
+  
+  // Parse r, g, b
+  let r, g, b;
+  if (color.length === 3) {
+    r = parseInt(color[0] + color[0], 16);
+    g = parseInt(color[1] + color[1], 16);
+    b = parseInt(color[2] + color[2], 16);
+  } else {
+    r = parseInt(color.slice(0, 2), 16);
+    g = parseInt(color.slice(2, 4), 16);
+    b = parseInt(color.slice(4, 6), 16);
+  }
+  
+  // Darken
+  r = Math.max(0, r - amount);
+  g = Math.max(0, g - amount);
+  b = Math.max(0, b - amount);
+  
+  // Convert back to hex
+  const toHex = (c) => c.toString(16).padStart(2, '0');
+  return (useHash ? '#' : '') + toHex(r) + toHex(g) + toHex(b);
+}
