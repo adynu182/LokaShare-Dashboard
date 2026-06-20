@@ -8,7 +8,7 @@ import MainSheet from './components/MainSheet';
 import MapCanvas from './components/MapCanvas';
 import PeopleView from './views/PeopleView';
 import ManageView from './views/ManageView';
-import PetaView from './views/PetaView';
+import HistoryView from './views/HistoryView';
 import ModernToast from './components/ModernToast';
 import './App.css';
 
@@ -174,7 +174,7 @@ export default function App() {
         }
       >
         {activeTab === 'map' && (
-          <PetaView
+          <HistoryView
             locations={filteredLocations}
             stationaryFilter={stationaryFilter}
             stationaryCounts={stationaryCounts}
