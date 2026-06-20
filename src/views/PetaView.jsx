@@ -1,7 +1,7 @@
 import React from 'react';
-import { Battery, Crosshair, MapPin, Clock, Satellite, Car } from 'lucide-react';
+import { Crosshair, MapPin, Clock, Satellite, Navigation, ParkingSquare } from 'lucide-react';
 
-// FIX #14: Format ageMs dari millisecond ke format yang mudah dibaca manusia
+// Format ageMs dari millisecond ke format yang mudah dibaca manusia
 function formatAge(ageMs) {
   if (ageMs === undefined || ageMs === null) return 'N/A';
   if (ageMs < 1000) return `${ageMs}ms`;
@@ -11,73 +11,125 @@ function formatAge(ageMs) {
   return `${minutes}m ${seconds}s`;
 }
 
-export default function PetaView({ locations, onSelectLocation }) {
+// Konfigurasi tombol filter
+const FILTER_OPTIONS = [
+  {
+    value: 'all',
+    label: 'Semua',
+    icon: <MapPin size={13} />,
+    colorClass: 'sf-all',
+  },
+  {
+    value: 'moving',
+    label: 'Bergerak',
+    icon: <Navigation size={13} />,
+    colorClass: 'sf-moving',
+  },
+  {
+    value: 'stationary',
+    label: 'Diam',
+    icon: <ParkingSquare size={13} />,
+    colorClass: 'sf-stationary',
+  },
+];
+
+export default function PetaView({
+  locations,
+  stationaryFilter,
+  stationaryCounts,
+  onStationaryFilter,
+  onSelectLocation
+}) {
   return (
     <div className="view-container">
-      <div className="map-list">
-        {locations.map((loc, index) => (
-          <div
-            key={loc.id}
-            className="map-item"
-            onClick={() => onSelectLocation(index)}
-            style={{ cursor: 'pointer', padding: '0.75rem 0' }}
+
+      {/* ── Filter Bar ── */}
+      <div className="sf-bar">
+        {FILTER_OPTIONS.map(opt => (
+          <button
+            key={opt.value}
+            className={`sf-pill ${opt.colorClass} ${stationaryFilter === opt.value ? 'sf-active' : ''}`}
+            onClick={() => onStationaryFilter(opt.value)}
           >
-            <div className="map-content" style={{ padding: '0.75rem 1rem' }}>
-              <div className="map-header" style={{ display: 'flex', gap: '8px' }}>
-                <span className="map-time" style={{ fontWeight: '700', display: 'flex', alignItems: 'center' }}>
-                  {locations.length - index}.
-                </span>
-                <div className="map-details" style={{ marginTop: '6px' }}>
-                  <div className="detail-grid">
-                    <div className="detail-item">
-                      <span>{loc.source || 'N/A'}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span>{loc.localTimestamp
-                        ? (() => {
-                          const date = new Date(loc.localTimestamp);
-                          const dateStr = date.toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: '2-digit'
-                          });
-                          const timeStr = date.toLocaleTimeString('id-ID', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          }).replace(/:/g, '.');
-                          return `${dateStr}, ${timeStr}`;
+            {opt.icon}
+            <span>{opt.label}</span>
+            <span className="sf-badge">{stationaryCounts?.[opt.value] ?? 0}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* ── Location List ── */}
+      <div className="map-list">
+        {locations.map((loc, index) => {
+          const isMoving = loc.isStationary === false;
+          const isDiam   = loc.isStationary === true;
+
+          return (
+            <div
+              key={loc.id}
+              className={`map-item loc-card ${isMoving ? 'loc-moving' : ''} ${isDiam ? 'loc-stationary' : ''}`}
+              onClick={() => onSelectLocation(index)}
+            >
+              {/* Left accent bar */}
+              <div className="loc-accent" />
+
+              <div className="loc-body">
+                {/* Row: nomor urut + badge status */}
+                <div className="loc-row-top">
+                  <span className="loc-seq">{locations.length - index}</span>
+                  <span className={`loc-status-badge ${isMoving ? 'badge-moving' : isDiam ? 'badge-stationary' : 'badge-unknown'}`}>
+                    {isMoving
+                      ? <><Navigation size={11} /> Bergerak</>
+                      : isDiam
+                        ? <><ParkingSquare size={11} /> Diam</>
+                        : <><MapPin size={11} /> N/A</>
+                    }
+                  </span>
+                  <span className="loc-time">
+                    {loc.localTimestamp
+                      ? (() => {
+                          const d = new Date(loc.localTimestamp);
+                          return d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(/:/g, '.');
                         })()
-                        : 'N/A'}</span>
-                    </div>
-                    <div className="detail-item">
-                      <Car size={14} />
-                      <span>Park: {loc.isStationary !== undefined ? `${loc.isStationary}` : 'N/A'}</span>
-                    </div>
-                    <div className="detail-item">
-                      <Crosshair size={14} />
-                      <span>Akurasi: {loc.accuracy !== undefined ? `${Math.round(loc.accuracy)}m` : 'N/A'}</span>
-                    </div>
-                    <div className="detail-item">
-                      <Clock size={14} />
-                      {/* FIX #14: Tampilkan ageMs dalam format human-readable */}
-                      <span>Age: {formatAge(loc.ageMs)}</span>
-                    </div>
-                    <div className="detail-item">
-                      <Satellite size={14} />
-                      <span>Satelit: {loc.satellitesUsed !== undefined ? loc.satellitesUsed : 'N/A'}</span>
-                    </div>
+                      : 'N/A'}
+                  </span>
+                </div>
+
+                {/* Row: detail grid */}
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <Crosshair size={13} />
+                    <span>{loc.accuracy != null ? `${Math.round(loc.accuracy)}m` : 'N/A'}</span>
+                  </div>
+                  <div className="detail-item">
+                    <Clock size={13} />
+                    <span>{formatAge(loc.ageMs)}</span>
+                  </div>
+                  <div className="detail-item">
+                    <Satellite size={13} />
+                    <span>{loc.satellitesUsed ?? 'N/A'} sat</span>
+                  </div>
+                  <div className="detail-item">
+                    <MapPin size={13} />
+                    <span>{loc.source || 'N/A'}</span>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {locations.length === 0 && (
         <div className="empty-state">
           <MapPin size={48} />
-          <p>Belum ada data lokasi tercatat</p>
+          <p>
+            {stationaryFilter === 'moving'
+              ? 'Tidak ada titik bergerak'
+              : stationaryFilter === 'stationary'
+              ? 'Tidak ada titik diam'
+              : 'Belum ada data lokasi tercatat'}
+          </p>
         </div>
       )}
     </div>

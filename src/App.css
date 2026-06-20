@@ -619,3 +619,162 @@
 .date-filter-scroll::-webkit-scrollbar {
   display: none; /* Chrome/Safari */
 }
+
+/* ══════════════════════════════════════════════
+   Stationary Filter Bar  (sf-*)
+══════════════════════════════════════════════ */
+
+.sf-bar {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem 0.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.sf-bar::-webkit-scrollbar { display: none; }
+
+/* Base pill */
+.sf-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 13px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+.sf-pill:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+/* Count badge inside pill */
+.sf-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(0,0,0,0.1);
+  color: inherit;
+}
+
+/* "Semua" — blue */
+.sf-all.sf-active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #1d4ed8;
+}
+.sf-all:not(.sf-active):hover {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+/* "Bergerak" — green */
+.sf-moving.sf-active {
+  background: #059669;
+  color: #fff;
+  border-color: #047857;
+}
+.sf-moving:not(.sf-active):hover {
+  border-color: #059669;
+  color: #059669;
+}
+
+/* "Diam" — amber */
+.sf-stationary.sf-active {
+  background: #d97706;
+  color: #fff;
+  border-color: #b45309;
+}
+.sf-stationary:not(.sf-active):hover {
+  border-color: #d97706;
+  color: #d97706;
+}
+
+/* ══════════════════════════════════════════════
+   Location Card  (loc-*)
+══════════════════════════════════════════════ */
+
+.loc-card {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  border-radius: 12px;
+  margin: 0.35rem 0.75rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--card);
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+.loc-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+.loc-card:active {
+  transform: translateY(0);
+}
+
+/* Left accent strip — berubah warna sesuai status */
+.loc-accent {
+  width: 4px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+.loc-moving  .loc-accent { background: #059669; }
+.loc-stationary .loc-accent { background: #d97706; }
+
+.loc-body {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.loc-row-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.loc-seq {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--muted-foreground);
+  min-width: 20px;
+}
+
+.loc-time {
+  margin-left: auto;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+/* Status badge */
+.loc-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 10px;
+  font-size: 0.73rem;
+  font-weight: 700;
+}
+.badge-moving     { background: rgba(5,150,105,0.12); color: #059669; }
+.badge-stationary { background: rgba(217,119,6,0.12);  color: #d97706; }
+.badge-unknown    { background: var(--muted); color: var(--muted-foreground); }

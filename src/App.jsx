@@ -23,8 +23,9 @@ export default function App() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [toast, setToast] = useState({ message: '', type: 'info' });
 
-  // FIX #15: Memoize filteredLocations agar tidak dihitung ulang tiap render
-  // FIX #2: Gunakan getTimestampMs() agar aman untuk semua format timestamp Firestore
+  // Filter titik bergerak vs diam — 'all' | 'moving' | 'stationary'
+  const [stationaryFilter, setStationaryFilter] = useState('all');
+
   const filteredLocations = useMemo(() =>
     allLocations
       .filter(loc => !selectedUser || loc.userName === selectedUser)
@@ -38,23 +39,48 @@ export default function App() {
           year: 'numeric'
         });
         return date === selectedDate;
+      })
+      // Filter bergerak vs diam
+      .filter(loc => {
+        if (stationaryFilter === 'all') return true;
+        if (stationaryFilter === 'moving') return loc.isStationary === false;
+        if (stationaryFilter === 'stationary') return loc.isStationary === true;
+        return true;
       }),
-    [allLocations, selectedUser, selectedDate]
+    [allLocations, selectedUser, selectedDate, stationaryFilter]
   );
+
+  // Hitung jumlah titik per kategori (dari lokasi sebelum filter stationary)
+  const stationaryCounts = useMemo(() => {
+    const base = allLocations
+      .filter(loc => !selectedUser || loc.userName === selectedUser)
+      .filter(loc => {
+        if (!selectedDate) return true;
+        const ms = getTimestampMs(loc);
+        if (!ms) return false;
+        const date = new Date(ms).toLocaleDateString('id-ID', {
+          day: 'numeric', month: 'long', year: 'numeric'
+        });
+        return date === selectedDate;
+      });
+
+    return {
+      all: base.length,
+      moving: base.filter(loc => loc.isStationary === false).length,
+      stationary: base.filter(loc => loc.isStationary === true).length,
+    };
+  }, [allLocations, selectedUser, selectedDate]);
 
   const latestLocation = filteredLocations[0];
 
-  // FIX #1: Tambahkan selectedUser ke dependency array untuk cegah stale closure
   useEffect(() => {
     if (!loading) {
       if (!selectedUser && users.length > 0) setSelectedUser(users[0]);
     }
   }, [loading, users, selectedUser]);
 
-  // Handlers
   const triggerToast = (message, type = 'info') => setToast({ message, type });
 
-  // FIX #3: useCallback agar referensi onClose stabil → timer Toast tidak reset tiap render
   const handleCloseToast = useCallback(() => {
     setToast(prev => ({ ...prev, message: '' }));
   }, []);
@@ -67,6 +93,7 @@ export default function App() {
     }
     setSelectedDate('');
     setActiveIndex(null);
+    setStationaryFilter('all'); // Reset filter saat ganti user
   };
 
   const handleSelectDate = (date) => {
@@ -74,6 +101,7 @@ export default function App() {
     setActiveIndex(null);
     setActiveTab('map');
     setIsSheetOpen(true);
+    setStationaryFilter('all'); // Reset filter saat ganti tanggal
     if (date) {
       triggerToast(`Melihat lokasi tanggal ${date}`, 'info');
     } else {
@@ -81,11 +109,17 @@ export default function App() {
     }
   };
 
+  const handleStationaryFilter = useCallback((value) => {
+    setStationaryFilter(value);
+    setActiveIndex(null);
+    const label = value === 'moving' ? 'Bergerak' : value === 'stationary' ? 'Diam' : 'Semua';
+    triggerToast(`Filter: ${label} (${stationaryCounts[value]} titik)`, 'info');
+  }, [stationaryCounts]);
+
   const handleDeleteUser = async (userName) => {
     const result = await deleteUserLocations(userName);
     if (result.success) {
       triggerToast(`Berhasil menghapus data ${userName}`, 'success');
-      // FIX #9: Reset selectedUser hanya jika user yang dihapus adalah yang sedang aktif
       if (selectedUser === userName) setSelectedUser('');
     } else {
       triggerToast(`Gagal: ${result.error}`, 'error');
@@ -98,7 +132,6 @@ export default function App() {
 
   return (
     <div className="app-container">
-      {/* Background Map */}
       <MapCanvas
         locations={filteredLocations}
         selectedUser={selectedUser}
@@ -106,14 +139,12 @@ export default function App() {
         onMarkerClick={handleMarkerClick}
       />
 
-      {/* Floating Header */}
       <StatsHeader
         connectionStatus={connectionStatus}
         selectedUser={selectedUser}
         latestLocation={latestLocation}
       />
 
-      {/* Interactive Bottom Sheet */}
       <MainSheet
         isOpen={isSheetOpen}
         setIsOpen={setIsSheetOpen}
@@ -125,6 +156,9 @@ export default function App() {
         {activeTab === 'map' && (
           <PetaView
             locations={filteredLocations}
+            stationaryFilter={stationaryFilter}
+            stationaryCounts={stationaryCounts}
+            onStationaryFilter={handleStationaryFilter}
             onSelectLocation={(index) => {
               setActiveIndex(index);
               setIsSheetOpen(false);
@@ -149,13 +183,11 @@ export default function App() {
         )}
       </MainSheet>
 
-      {/* Navigation Hub */}
       <BottomNav activeTab={activeTab} setActiveTab={(tab) => {
         setActiveTab(tab);
         setIsSheetOpen(true);
       }} />
 
-      {/* FIX #3: Pakai handleCloseToast (useCallback) agar timer tidak reset tiap render */}
       <ModernToast
         message={toast.message}
         type={toast.type}
