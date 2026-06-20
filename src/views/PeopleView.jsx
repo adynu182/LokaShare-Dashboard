@@ -24,7 +24,6 @@ const QUICK = [
   { label: 'Hari Ini', from: todayKey(),   to: todayKey()  },
   { label: 'Kemarin',  from: daysAgoKey(1), to: daysAgoKey(1) },
   { label: '7 Hari',   from: daysAgoKey(6), to: todayKey() },
-  { label: '30 Hari',  from: daysAgoKey(29), to: todayKey() },
 ];
 
 // ── Komponen utama ───────────────────────────────────────────────
