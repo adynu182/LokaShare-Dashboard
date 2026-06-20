@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useLocations } from './hooks/useLocations';
 import { deleteUserLocations } from './utils/deleteUserData';
-import { getTimestampMs } from './utils/helpers';
+import { getLocalDateKey } from './utils/helpers';
 import StatsHeader from './components/StatsHeader';
 import BottomNav from './components/BottomNav';
 import MainSheet from './components/MainSheet';
@@ -13,71 +13,63 @@ import ModernToast from './components/ModernToast';
 import './App.css';
 
 export default function App() {
-  const { allLocations, users, loading, error, connectionStatus } = useLocations();
+  const { allLocations, users, loading, connectionStatus } = useLocations();
 
-  // State
-  const [activeTab, setActiveTab] = useState('map');
-  const [selectedUser, setSelectedUser] = useState('');
-  const [selectedDate, setSelectedDate] = useState('');
-  const [activeIndex, setActiveIndex] = useState(null);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [toast, setToast] = useState({ message: '', type: 'info' });
-
-  // Filter titik bergerak vs diam — 'all' | 'moving' | 'stationary'
+  const [activeTab, setActiveTab]         = useState('map');
+  const [activeIndex, setActiveIndex]     = useState(null);
+  const [isSheetOpen, setIsSheetOpen]     = useState(false);
+  const [toast, setToast]                 = useState({ message: '', type: 'info' });
   const [stationaryFilter, setStationaryFilter] = useState('all');
 
+  // --- Filter baru: rentang tanggal { from: 'YYYY-MM-DD', to: 'YYYY-MM-DD' }
+  const [dateRange, setDateRange] = useState({ from: '', to: '' });
+
+  // --- Filter baru: Set nama user yang tampil. null = semua tampil
+  const [visibleUsers, setVisibleUsers] = useState(null);
+
+  // Helper: apakah lokasi masuk rentang tanggal aktif?
+  const inDateRange = useCallback((loc) => {
+    const { from, to } = dateRange;
+    if (!from) return true;
+    const key = getLocalDateKey(loc.timestamp || loc.localTimestamp);
+    if (!key) return false;
+    return to ? (key >= from && key <= to) : key === from;
+  }, [dateRange]);
+
+  // Lokasi yang lolos semua filter (ditampilkan di peta + list)
   const filteredLocations = useMemo(() =>
     allLocations
-      .filter(loc => !selectedUser || loc.userName === selectedUser)
+      .filter(loc => !visibleUsers || visibleUsers.has(loc.userName))
+      .filter(inDateRange)
       .filter(loc => {
-        if (!selectedDate) return true;
-        const ms = getTimestampMs(loc);
-        if (!ms) return false;
-        const date = new Date(ms).toLocaleDateString('id-ID', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric'
-        });
-        return date === selectedDate;
-      })
-      // Filter bergerak vs diam
-      .filter(loc => {
-        if (stationaryFilter === 'all') return true;
-        if (stationaryFilter === 'moving') return loc.isStationary === false;
+        if (stationaryFilter === 'moving')     return loc.isStationary === false;
         if (stationaryFilter === 'stationary') return loc.isStationary === true;
         return true;
       }),
-    [allLocations, selectedUser, selectedDate, stationaryFilter]
+    [allLocations, visibleUsers, inDateRange, stationaryFilter]
   );
 
-  // Hitung jumlah titik per kategori (dari lokasi sebelum filter stationary)
+  // Jumlah per kategori stationary (tanpa filter stationary itu sendiri)
   const stationaryCounts = useMemo(() => {
     const base = allLocations
-      .filter(loc => !selectedUser || loc.userName === selectedUser)
-      .filter(loc => {
-        if (!selectedDate) return true;
-        const ms = getTimestampMs(loc);
-        if (!ms) return false;
-        const date = new Date(ms).toLocaleDateString('id-ID', {
-          day: 'numeric', month: 'long', year: 'numeric'
-        });
-        return date === selectedDate;
-      });
-
+      .filter(loc => !visibleUsers || visibleUsers.has(loc.userName))
+      .filter(inDateRange);
     return {
-      all: base.length,
-      moving: base.filter(loc => loc.isStationary === false).length,
+      all:        base.length,
+      moving:     base.filter(loc => loc.isStationary === false).length,
       stationary: base.filter(loc => loc.isStationary === true).length,
     };
-  }, [allLocations, selectedUser, selectedDate]);
+  }, [allLocations, visibleUsers, inDateRange]);
+
+  // Untuk StatsHeader / MapCanvas polyline: ambil user tunggal jika hanya 1 tampil
+  const primaryUser = useMemo(() =>
+    visibleUsers?.size === 1 ? [...visibleUsers][0] : '',
+    [visibleUsers]
+  );
 
   const latestLocation = filteredLocations[0];
 
-  useEffect(() => {
-    if (!loading) {
-      if (!selectedUser && users.length > 0) setSelectedUser(users[0]);
-    }
-  }, [loading, users, selectedUser]);
+  // ─── Handlers ───────────────────────────────────────────────
 
   const triggerToast = (message, type = 'info') => setToast({ message, type });
 
@@ -85,29 +77,55 @@ export default function App() {
     setToast(prev => ({ ...prev, message: '' }));
   }, []);
 
-  const handleSelectUser = (user) => {
-    if (selectedUser === user) {
-      setSelectedUser('');
-    } else {
-      setSelectedUser(user);
-    }
-    setSelectedDate('');
+  // Ubah rentang tanggal → auto-select semua user yang punya data di range itu
+  const handleDateRange = useCallback((newRange) => {
+    setDateRange(newRange);
     setActiveIndex(null);
-    setStationaryFilter('all'); // Reset filter saat ganti user
-  };
+    setStationaryFilter('all');
 
-  const handleSelectDate = (date) => {
-    setSelectedDate(date);
-    setActiveIndex(null);
-    setActiveTab('map');
-    setIsSheetOpen(true);
-    setStationaryFilter('all'); // Reset filter saat ganti tanggal
-    if (date) {
-      triggerToast(`Melihat lokasi tanggal ${date}`, 'info');
-    } else {
-      triggerToast(`Melihat semua lokasi ${selectedUser}`, 'info');
+    if (!newRange.from) {
+      // "Semua" → hapus filter user
+      setVisibleUsers(null);
+      return;
     }
-  };
+
+    // Auto-pilih user yang punya data di rentang baru
+    const usersInRange = new Set(
+      allLocations
+        .filter(loc => {
+          const key = getLocalDateKey(loc.timestamp || loc.localTimestamp);
+          if (!key) return false;
+          const { from, to } = newRange;
+          return to ? (key >= from && key <= to) : key === from;
+        })
+        .map(loc => loc.userName)
+        .filter(Boolean)
+    );
+    setVisibleUsers(usersInRange);
+  }, [allLocations]);
+
+  // Toggle visibilitas satu user
+  const handleToggleUser = useCallback((username) => {
+    setVisibleUsers(prev => {
+      if (!prev) {
+        // null = semua tampil → sembunyikan satu user
+        const all = new Set(allLocations.map(l => l.userName).filter(Boolean));
+        all.delete(username);
+        return all;
+      }
+      const next = new Set(prev);
+      if (next.has(username)) next.delete(username);
+      else next.add(username);
+      return next;
+    });
+    setActiveIndex(null);
+  }, [allLocations]);
+
+  // Tampilkan semua / sembunyikan semua
+  const handleSelectAllUsers = useCallback((usernames) => {
+    setVisibleUsers(usernames.length === 0 ? new Set() : new Set(usernames));
+    setActiveIndex(null);
+  }, []);
 
   const handleStationaryFilter = useCallback((value) => {
     setStationaryFilter(value);
@@ -120,28 +138,30 @@ export default function App() {
     const result = await deleteUserLocations(userName);
     if (result.success) {
       triggerToast(`Berhasil menghapus data ${userName}`, 'success');
-      if (selectedUser === userName) setSelectedUser('');
+      if (visibleUsers) {
+        const next = new Set(visibleUsers);
+        next.delete(userName);
+        setVisibleUsers(next);
+      }
     } else {
       triggerToast(`Gagal: ${result.error}`, 'error');
     }
   };
 
-  const handleMarkerClick = (index) => {
-    setActiveIndex(index);
-  };
+  // ─── Render ─────────────────────────────────────────────────
 
   return (
     <div className="app-container">
       <MapCanvas
         locations={filteredLocations}
-        selectedUser={selectedUser}
+        selectedUser={primaryUser}
         activeIndex={activeIndex}
-        onMarkerClick={handleMarkerClick}
+        onMarkerClick={setActiveIndex}
       />
 
       <StatsHeader
         connectionStatus={connectionStatus}
-        selectedUser={selectedUser}
+        selectedUser={primaryUser}
         latestLocation={latestLocation}
       />
 
@@ -149,8 +169,8 @@ export default function App() {
         isOpen={isSheetOpen}
         setIsOpen={setIsSheetOpen}
         title={
-          activeTab === 'people' ? 'Daftar Orang' :
-            activeTab === 'manage' ? 'Pengaturan' : 'Daftar Lokasi'
+          activeTab === 'people'  ? 'Orang' :
+          activeTab === 'manage'  ? 'Pengaturan' : 'Daftar Lokasi'
         }
       >
         {activeTab === 'map' && (
@@ -165,16 +185,18 @@ export default function App() {
             }}
           />
         )}
+
         {activeTab === 'people' && (
           <PeopleView
-            users={users}
-            selectedUser={selectedUser}
-            onSelectUser={handleSelectUser}
             allLocations={allLocations}
-            selectedDate={selectedDate}
-            onSelectDate={handleSelectDate}
+            dateRange={dateRange}
+            onDateRange={handleDateRange}
+            visibleUsers={visibleUsers}
+            onToggleUser={handleToggleUser}
+            onSelectAllUsers={handleSelectAllUsers}
           />
         )}
+
         {activeTab === 'manage' && (
           <ManageView
             users={users}
