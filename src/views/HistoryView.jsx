@@ -1,7 +1,8 @@
+import { Clock, Crosshair, MapPin, Navigation, ParkingSquare, Satellite } from 'lucide-react';
 import React, { useMemo } from 'react';
-import { Crosshair, Clock, Satellite, MapPin, Navigation, ParkingSquare } from 'lucide-react';
+
+import { formatLocalDate, getLocalDateKey } from '../utils/helpers';
 import { getUserColor } from '../utils/markerColors';
-import { getLocalDateKey, formatLocalDate } from '../utils/helpers';
 
 // ── Helpers ──────────────────────────────────────────────────────
 
@@ -23,13 +24,12 @@ function rgba(hex, alpha) {
 // ── Filter bar config (sama dengan PetaView) ─────────────────────
 
 const FILTERS = [
-  { value: 'all',        label: 'Semua',    icon: <MapPin size={13} />,       colorClass: 'sf-all'        },
-  { value: 'moving',     label: 'Bergerak', icon: <Navigation size={13} />,   colorClass: 'sf-moving'     },
+  { value: 'all',        label: 'All',    icon: <MapPin size={13} />,       colorClass: 'sf-all'        },
+  { value: 'moving',     label: 'Jalan', icon: <Navigation size={13} />,   colorClass: 'sf-moving'     },
   { value: 'stationary', label: 'Diam',     icon: <ParkingSquare size={13} />, colorClass: 'sf-stationary' },
 ];
 
 // ── Komponen ─────────────────────────────────────────────────────
-
 export default function HistoryView({
   locations,
   stationaryFilter,
@@ -143,7 +143,7 @@ export default function HistoryView({
                     {/* Status */}
                     <span className={`hv-badge ${isMoving ? 'hv-badge--moving' : isDiam ? 'hv-badge--diam' : 'hv-badge--na'}`}>
                       {isMoving
-                        ? <><Navigation size={10} />Bergerak</>
+                        ? <><Navigation size={10} />Jalan</>
                         : isDiam
                         ? <><ParkingSquare size={10} />Diam</>
                         : <><MapPin size={10} />N/A</>

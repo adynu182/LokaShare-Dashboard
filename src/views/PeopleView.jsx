@@ -1,7 +1,8 @@
+import { Calendar, Eye, EyeOff, Users } from 'lucide-react';
 import React, { useMemo } from 'react';
-import { Calendar, Users, Eye, EyeOff } from 'lucide-react';
-import { getUserColor } from '../utils/markerColors';
+
 import { getLocalDateKey } from '../utils/helpers';
+import { getUserColor } from '../utils/markerColors';
 
 // ── Helpers tanggal ─────────────────────────────────────────────
 function toLocalKey(d) {
@@ -20,7 +21,7 @@ const formatLabel  = (key) => {
 
 // Tombol cepat pilih tanggal
 const QUICK = [
-  { label: 'Semua',    from: '',           to: ''          },
+  { label: 'All',    from: '',           to: ''          },
   { label: 'Hari Ini', from: todayKey(),   to: todayKey()  },
   { label: 'Kemarin',  from: daysAgoKey(1), to: daysAgoKey(1) },
   { label: '7 Hari',   from: daysAgoKey(6), to: todayKey() },
@@ -74,12 +75,15 @@ export default function PeopleView({
   return (
     <div className="pv-wrap">
 
-      {/* ══ SECTION 1 : FILTER TANGGAL ══ */}
+      {/* ══ SECTION 1 : DAFTAR PENGGUNA ══ */}
       <div className="pv-card">
-        <p className="pv-card-title">
-          <Calendar size={13} strokeWidth={2.5} />
-          Filter Tanggal
-        </p>
+          <p className="pv-card-title" style={{ margin: 0 }}>
+            <Users size={13} strokeWidth={2.5} />
+            Pengguna
+            {usersWithData.length > 0 && (
+              <span className="pv-title-count">{visibleCount}/{usersWithData.length} tampil</span>
+            )}
+          </p>
 
         {/* Quick buttons */}
         <div className="pv-quick-row">
@@ -94,66 +98,8 @@ export default function PeopleView({
           ))}
         </div>
 
-        {/* Divider */}
-        <div className="pv-or">atau pilih manual</div>
-
-        {/* Manual date pickers */}
-        <div className="pv-date-grid">
-          <div className="pv-date-field">
-            <label className="pv-date-lbl">Dari</label>
-            <input
-              type="date"
-              className="pv-date-inp"
-              value={dateRange.from}
-              max={dateRange.to || today}
-              onChange={e => onDateRange({ from: e.target.value, to: dateRange.to })}
-            />
-          </div>
-          <div className="pv-date-field">
-            <label className="pv-date-lbl">Sampai</label>
-            <div className="pv-date-inp-row">
-              <input
-                type="date"
-                className="pv-date-inp"
-                value={dateRange.to}
-                min={dateRange.from}
-                max={today}
-                placeholder="opsional"
-                onChange={e => onDateRange({ from: dateRange.from, to: e.target.value })}
-              />
-              {dateRange.to && (
-                <button
-                  className="pv-clr-btn"
-                  title="Hapus tanggal akhir"
-                  onClick={() => onDateRange({ from: dateRange.from, to: '' })}
-                >×</button>
-              )}
-            </div>
-            {dateRange.from && !dateRange.to && (
-              <span className="pv-hint">kosong = satu hari saja</span>
-            )}
-          </div>
-        </div>
-
-        {/* Rentang aktif */}
-        {rangeLabel && (
-          <div className="pv-range-badge">
-            <Calendar size={12} />
-            {rangeLabel}
-          </div>
-        )}
-      </div>
-
-      {/* ══ SECTION 2 : DAFTAR PENGGUNA ══ */}
-      <div className="pv-card">
         <div className="pv-card-title-row">
-          <p className="pv-card-title" style={{ margin: 0 }}>
-            <Users size={13} strokeWidth={2.5} />
-            Pengguna
-            {usersWithData.length > 0 && (
-              <span className="pv-title-count">{visibleCount}/{usersWithData.length} tampil</span>
-            )}
-          </p>
+
           {usersWithData.length > 0 && (
             <div className="pv-bulk-actions">
               <button className="pv-bulk-btn" onClick={() => onSelectAllUsers(allNames)}>
@@ -205,6 +151,60 @@ export default function PeopleView({
                 </button>
               );
             })}
+          </div>
+        )}
+      </div>
+
+
+      {/* ══ SECTION 2 : FILTER TANGGAL ══ */}
+      <div className="pv-card">
+
+        {/* Divider */}
+        <div className="pv-or">Filter tanggal manual</div>
+
+        {/* Manual date pickers */}
+        <div className="pv-date-grid">
+          <div className="pv-date-field">
+            <label className="pv-date-lbl">Dari</label>
+            <input
+              type="date"
+              className="pv-date-inp"
+              value={dateRange.from}
+              max={dateRange.to || today}
+              onChange={e => onDateRange({ from: e.target.value, to: dateRange.to })}
+            />
+          </div>
+          <div className="pv-date-field">
+            <label className="pv-date-lbl">Sampai</label>
+            <div className="pv-date-inp-row">
+              <input
+                type="date"
+                className="pv-date-inp"
+                value={dateRange.to}
+                min={dateRange.from}
+                max={today}
+                placeholder="opsional"
+                onChange={e => onDateRange({ from: dateRange.from, to: e.target.value })}
+              />
+              {dateRange.to && (
+                <button
+                  className="pv-clr-btn"
+                  title="Hapus tanggal akhir"
+                  onClick={() => onDateRange({ from: dateRange.from, to: '' })}
+                >×</button>
+              )}
+            </div>
+            {dateRange.from && !dateRange.to && (
+              <span className="pv-hint">kosong = satu hari saja</span>
+            )}
+          </div>
+        </div>
+
+        {/* Rentang aktif */}
+        {rangeLabel && (
+          <div className="pv-range-badge">
+            <Calendar size={12} />
+            {rangeLabel}
           </div>
         )}
       </div>
