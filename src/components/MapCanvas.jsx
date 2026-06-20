@@ -10,7 +10,8 @@ export default function MapCanvas({ locations, selectedUser, activeIndex, onMark
   const markersLayer = useRef(L.layerGroup());
   const polylineLayer = useRef(null);
 
-  // Global handler for reverse geocoding
+  // FIX #6: Tambahkan return cleanup → hapus window.lookupAddress saat unmount (cegah memory leak)
+  // FIX #4: Ganti innerHTML dengan textContent → cegah XSS dari response Nominatim
   useEffect(() => {
     window.lookupAddress = async (id, lat, lon) => {
       const btn = document.querySelector(`#address-${id} .btn-lookup`);
@@ -23,15 +24,27 @@ export default function MapCanvas({ locations, selectedUser, activeIndex, onMark
         const address = data.features[0].properties.display_name;
         const container = document.getElementById(`address-${id}`);
         if (container) {
-          container.innerHTML = `<div class="address-text">${address}</div>`;
+          // FIX #4: Pakai textContent bukan innerHTML untuk cegah XSS
+          const div = document.createElement('div');
+          div.className = 'address-text';
+          div.textContent = address;
+          container.innerHTML = '';
+          container.appendChild(div);
         }
       } catch (error) {
         console.error('Error fetching address:', error);
-        if (btn) {
-          btn.disabled = false;
-          btn.innerText = 'Gagal, coba lagi';
+        // Re-query btn karena popup bisa sudah ditutup saat await selesai
+        const freshBtn = document.querySelector(`#address-${id} .btn-lookup`);
+        if (freshBtn) {
+          freshBtn.disabled = false;
+          freshBtn.innerText = 'Gagal, coba lagi';
         }
       }
+    };
+
+    // FIX #6: Cleanup global function saat komponen unmount
+    return () => {
+      delete window.lookupAddress;
     };
   }, []);
 
@@ -77,12 +90,11 @@ export default function MapCanvas({ locations, selectedUser, activeIndex, onMark
       const isLatest = i === 0;
       const isActive = activeIndex === i;
       let color = getUserColor(loc.userName);
-      
-      // Darken color if device is stationary
+
       if (loc.isStationary) {
-        color = darkenColor(color, 60); // Use a significant darkening amount
+        color = darkenColor(color, 60);
       }
-      
+
       const sequenceNumber = locations.length - i;
 
       const icon = L.divIcon({
@@ -100,14 +112,12 @@ export default function MapCanvas({ locations, selectedUser, activeIndex, onMark
       });
 
       const marker = L.marker([loc.latitude, loc.longitude], { icon })
-        .on('click', (e) => {
-          onMarkerClick(i);
-        })
+        .on('click', () => { onMarkerClick(i); })
         .bindPopup(`
           <div class="popup-content">
             <div class="popup-item"><strong>Waktu:</strong> ${formatTimestamp(loc.localTimestamp)}</div>
             <div class="popup-item"><strong>Perangkat:</strong> ${loc.deviceModel || 'N/A'}</div>
-            <div class="popup-item"><strong>Akurasi:</strong> ${Math.round(loc.accuracy)}m</div>
+            <div class="popup-item"><strong>Akurasi:</strong> ${loc.accuracy != null ? Math.round(loc.accuracy) + 'm' : 'N/A'}</div>
             <div class="popup-item"><strong>Baterai:</strong> ${loc.battery !== undefined ? loc.battery + '%' : 'N/A'}</div>
             <div id="address-${loc.id}" class="popup-address">
               <button class="btn-lookup" onclick="window.lookupAddress('${loc.id}', ${loc.latitude}, ${loc.longitude})">Lihat Alamat</button>
@@ -137,12 +147,14 @@ export default function MapCanvas({ locations, selectedUser, activeIndex, onMark
     }
   }, [locations, selectedUser, activeIndex]);
 
+  // FIX #7: Tambahkan locations ke dependency array agar setView update
+  //         saat locations berubah sementara activeIndex tetap sama
   useEffect(() => {
     if (activeIndex !== null && locations[activeIndex]) {
       const { latitude, longitude } = locations[activeIndex];
       mapInstance.current?.setView([latitude, longitude], 17, { animate: true });
     }
-  }, [activeIndex]);
+  }, [activeIndex, locations]);
 
   return <div ref={mapRef} className="map-canvas" />;
 }

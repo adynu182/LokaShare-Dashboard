@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLocations } from './hooks/useLocations';
 import { deleteUserLocations } from './utils/deleteUserData';
+import { getTimestampMs } from './utils/helpers';
 import StatsHeader from './components/StatsHeader';
 import BottomNav from './components/BottomNav';
 import MainSheet from './components/MainSheet';
@@ -22,30 +23,41 @@ export default function App() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [toast, setToast] = useState({ message: '', type: 'info' });
 
-  const filteredLocations = allLocations
-    .filter(loc => !selectedUser || loc.userName === selectedUser)
-    .filter(loc => {
-      if (!selectedDate) return true;
-      if (!loc.timestamp) return false;
-      const date = new Date(loc.timestamp.seconds * 1000).toLocaleDateString('id-ID', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      });
-      return date === selectedDate;
-    });
+  // FIX #15: Memoize filteredLocations agar tidak dihitung ulang tiap render
+  // FIX #2: Gunakan getTimestampMs() agar aman untuk semua format timestamp Firestore
+  const filteredLocations = useMemo(() =>
+    allLocations
+      .filter(loc => !selectedUser || loc.userName === selectedUser)
+      .filter(loc => {
+        if (!selectedDate) return true;
+        const ms = getTimestampMs(loc);
+        if (!ms) return false;
+        const date = new Date(ms).toLocaleDateString('id-ID', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+        return date === selectedDate;
+      }),
+    [allLocations, selectedUser, selectedDate]
+  );
 
   const latestLocation = filteredLocations[0];
 
-  // Auto-select initial data
+  // FIX #1: Tambahkan selectedUser ke dependency array untuk cegah stale closure
   useEffect(() => {
     if (!loading) {
       if (!selectedUser && users.length > 0) setSelectedUser(users[0]);
     }
-  }, [loading, users]);
+  }, [loading, users, selectedUser]);
 
   // Handlers
   const triggerToast = (message, type = 'info') => setToast({ message, type });
+
+  // FIX #3: useCallback agar referensi onClose stabil → timer Toast tidak reset tiap render
+  const handleCloseToast = useCallback(() => {
+    setToast(prev => ({ ...prev, message: '' }));
+  }, []);
 
   const handleSelectUser = (user) => {
     if (selectedUser === user) {
@@ -73,7 +85,8 @@ export default function App() {
     const result = await deleteUserLocations(userName);
     if (result.success) {
       triggerToast(`Berhasil menghapus data ${userName}`, 'success');
-      setSelectedUser('');
+      // FIX #9: Reset selectedUser hanya jika user yang dihapus adalah yang sedang aktif
+      if (selectedUser === userName) setSelectedUser('');
     } else {
       triggerToast(`Gagal: ${result.error}`, 'error');
     }
@@ -114,7 +127,7 @@ export default function App() {
             locations={filteredLocations}
             onSelectLocation={(index) => {
               setActiveIndex(index);
-              setIsSheetOpen(false); // Close sheet to show map focus
+              setIsSheetOpen(false);
             }}
           />
         )}
@@ -142,11 +155,11 @@ export default function App() {
         setIsSheetOpen(true);
       }} />
 
-      {/* Notifications */}
+      {/* FIX #3: Pakai handleCloseToast (useCallback) agar timer tidak reset tiap render */}
       <ModernToast
         message={toast.message}
         type={toast.type}
-        onClose={() => setToast({ ...toast, message: '' })}
+        onClose={handleCloseToast}
       />
     </div>
   );

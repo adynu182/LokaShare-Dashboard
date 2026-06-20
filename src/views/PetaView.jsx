@@ -1,6 +1,16 @@
 import React from 'react';
 import { Battery, Crosshair, MapPin, Clock, Satellite, Car } from 'lucide-react';
 
+// FIX #14: Format ageMs dari millisecond ke format yang mudah dibaca manusia
+function formatAge(ageMs) {
+  if (ageMs === undefined || ageMs === null) return 'N/A';
+  if (ageMs < 1000) return `${ageMs}ms`;
+  if (ageMs < 60000) return `${(ageMs / 1000).toFixed(1)}s`;
+  const minutes = Math.floor(ageMs / 60000);
+  const seconds = Math.floor((ageMs % 60000) / 1000);
+  return `${minutes}m ${seconds}s`;
+}
+
 export default function PetaView({ locations, onSelectLocation }) {
   return (
     <div className="view-container">
@@ -49,7 +59,8 @@ export default function PetaView({ locations, onSelectLocation }) {
                     </div>
                     <div className="detail-item">
                       <Clock size={14} />
-                      <span>Age: {loc.ageMs !== undefined ? loc.ageMs : 'N/A'}</span>
+                      {/* FIX #14: Tampilkan ageMs dalam format human-readable */}
+                      <span>Age: {formatAge(loc.ageMs)}</span>
                     </div>
                     <div className="detail-item">
                       <Satellite size={14} />
