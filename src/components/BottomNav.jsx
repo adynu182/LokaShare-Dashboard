@@ -4,8 +4,8 @@ import { cn } from '../utils/cn';
 
 export default function BottomNav({ activeTab, setActiveTab }) {
   const tabs = [
-    { id: 'map', icon: History, label: 'History' },
-    { id: 'people', icon: Users, label: 'Orang' },
+    { id: 'map', icon: History, label: 'Riwayat' },
+    { id: 'people', icon: Users, label: 'Pengguna' },
     { id: 'manage', icon: Settings, label: 'Atur' },
   ];
 

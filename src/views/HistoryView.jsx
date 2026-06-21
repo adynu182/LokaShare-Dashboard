@@ -25,7 +25,7 @@ function rgba(hex, alpha) {
 
 const FILTERS = [
   { value: 'all',        label: 'All',    icon: <MapPin size={13} />,       colorClass: 'sf-all'        },
-  { value: 'moving',     label: 'Jalan', icon: <Navigation size={13} />,   colorClass: 'sf-moving'     },
+  { value: 'moving',     label: 'Gerak', icon: <Navigation size={13} />,   colorClass: 'sf-moving'     },
   { value: 'stationary', label: 'Diam',     icon: <ParkingSquare size={13} />, colorClass: 'sf-stationary' },
 ];
 
@@ -143,7 +143,7 @@ export default function HistoryView({
                     {/* Status */}
                     <span className={`hv-badge ${isMoving ? 'hv-badge--moving' : isDiam ? 'hv-badge--diam' : 'hv-badge--na'}`}>
                       {isMoving
-                        ? <><Navigation size={10} />Jalan</>
+                        ? <><Navigation size={10} />Gerak</>
                         : isDiam
                         ? <><ParkingSquare size={10} />Diam</>
                         : <><MapPin size={10} />N/A</>

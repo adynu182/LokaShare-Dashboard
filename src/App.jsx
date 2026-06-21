@@ -1,15 +1,17 @@
-import React, { useState, useMemo, useCallback } from 'react';
-import { useLocations } from './hooks/useLocations';
-import { deleteUserLocations } from './utils/deleteUserData';
-import { getLocalDateKey } from './utils/helpers';
-import StatsHeader from './components/StatsHeader';
+import React, { useCallback, useMemo, useState } from 'react';
+
 import BottomNav from './components/BottomNav';
 import MainSheet from './components/MainSheet';
 import MapCanvas from './components/MapCanvas';
-import PeopleView from './views/PeopleView';
-import ManageView from './views/ManageView';
-import HistoryView from './views/HistoryView';
 import ModernToast from './components/ModernToast';
+import StatsHeader from './components/StatsHeader';
+import { useLocations } from './hooks/useLocations';
+import { deleteUserLocations } from './utils/deleteUserData';
+import { getLocalDateKey } from './utils/helpers';
+import HistoryView from './views/HistoryView';
+import ManageView from './views/ManageView';
+import PeopleView from './views/PeopleView';
+
 import './App.css';
 
 export default function App() {
@@ -169,8 +171,8 @@ export default function App() {
         isOpen={isSheetOpen}
         setIsOpen={setIsSheetOpen}
         title={
-          activeTab === 'people'  ? 'Orang' :
-          activeTab === 'manage'  ? 'Pengaturan' : 'Daftar Lokasi'
+          activeTab === 'people'  ? 'Pengguna' :
+          activeTab === 'manage'  ? 'Pengaturan' : 'Riwayat Lokasi'
         }
       >
         {activeTab === 'map' && (
