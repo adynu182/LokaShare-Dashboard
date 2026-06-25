@@ -20,6 +20,7 @@ export default function App() {
   const [activeTab, setActiveTab]         = useState('map');
   const [activeIndex, setActiveIndex]     = useState(null);
   const [isSheetOpen, setIsSheetOpen]     = useState(false);
+  const [popupTrigger, setPopupTrigger]   = useState({ index: null, ts: 0 });
   const [toast, setToast]                 = useState({ message: '', type: 'info' });
   const [stationaryFilter, setStationaryFilter] = useState('all');
 
@@ -159,6 +160,7 @@ export default function App() {
         selectedUser={primaryUser}
         activeIndex={activeIndex}
         onMarkerClick={setActiveIndex}
+        popupTrigger={popupTrigger}
       />
 
       <StatsHeader
@@ -184,6 +186,7 @@ export default function App() {
             onSelectLocation={(index) => {
               setActiveIndex(index);
               setIsSheetOpen(false);
+              setPopupTrigger({ index, ts: Date.now() });
             }}
           />
         )}
