@@ -94,9 +94,9 @@ export default function HistoryView({
             const initial  = (loc.userName || '?').charAt(0).toUpperCase();
 
             // Tanggal untuk separator
-            const dateKey  = getLocalDateKey(loc.timestamp || loc.localTimestamp);
+            const dateKey  = getLocalDateKey(loc.localTimestamp);
             const prevKey  = index > 0
-              ? getLocalDateKey(locsWithSeq[index - 1].timestamp || locsWithSeq[index - 1].localTimestamp)
+              ? getLocalDateKey(locsWithSeq[index - 1].localTimestamp)
               : null;
             const showSep  = dateKey && dateKey !== prevKey;
 

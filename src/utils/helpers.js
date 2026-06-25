@@ -21,7 +21,7 @@ export function formatTimestamp(ts) {
 }
 
 export function getTimestampMs(loc) {
-  const ts = loc.timestamp || loc.localTimestamp;
+  const ts = loc.localTimestamp;
   if (!ts) return 0;
   if (ts.toDate) return ts.toDate().getTime();
   if (ts.seconds) return ts.seconds * 1000;
