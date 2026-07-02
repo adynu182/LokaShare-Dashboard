@@ -40,7 +40,7 @@ export default function StatsHeader({ connectionStatus, selectedUser, latestLoca
         <div className="stats-group">
           <div className={cn("stat-pill", isStale && "critical")}>
             <Clock size={14} />
-            <span>Last Seen : {lastSeenLabel}</span>
+            <span>{lastSeenLabel}</span>
           </div>
         </div>
       )}
