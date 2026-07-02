@@ -21,10 +21,11 @@ const formatLabel  = (key) => {
 
 // Tombol cepat pilih tanggal
 const QUICK = [
-  { label: 'All',    from: '',           to: ''          },
+
   { label: 'Hari Ini', from: todayKey(),   to: todayKey()  },
   { label: 'Kemarin',  from: daysAgoKey(1), to: daysAgoKey(1) },
-  { label: '7 Hari',   from: daysAgoKey(6), to: todayKey() },
+  { label: '2 Hari Lalu',  from: daysAgoKey(2), to: daysAgoKey(2) },
+  { label: 'All',    from: '',           to: ''          },
 ];
 
 // ── Komponen utama ───────────────────────────────────────────────
