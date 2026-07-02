@@ -29,6 +29,38 @@ export function getTimestampMs(loc) {
   return new Date(ts).getTime() || 0;
 }
 
+/**
+ * Ubah selisih waktu (ms) menjadi label relatif berbahasa Inggris untuk info
+ * "Last Seen" di floating panel atas, misal "1 Minute Ago" / "3 Hours Ago" / "1 Day Ago".
+ *
+ * @param {number} ms - Timestamp (epoch ms) dari data lokasi
+ * @param {number} nowMs - Waktu "sekarang" (default: Date.now())
+ * @returns {string|null} label relatif, atau null jika ms tidak valid
+ */
+export function formatTimeAgo(ms, nowMs = Date.now()) {
+  if (!ms || isNaN(ms)) return null;
+
+  const diffMs = Math.max(0, nowMs - ms);
+  const sec   = Math.floor(diffMs / 1000);
+  const min   = Math.floor(sec / 60);
+  const hour  = Math.floor(min / 60);
+  const day   = Math.floor(hour / 24);
+  const week  = Math.floor(day / 7);
+  const month = Math.floor(day / 30);
+  const year  = Math.floor(day / 365);
+
+  const unit = (n, label) => `${n} ${label}${n !== 1 ? 's' : ''} Ago`;
+
+  if (sec < 10)   return 'Just Now';
+  if (sec < 60)   return unit(sec, 'Second');
+  if (min < 60)   return unit(min, 'Minute');
+  if (hour < 24)  return unit(hour, 'Hour');
+  if (day < 7)    return unit(day, 'Day');
+  if (week < 5)   return unit(week, 'Week');
+  if (month < 12) return unit(month, 'Month');
+  return unit(year, 'Year');
+}
+
 export function batteryClass(level) {
   if (level === undefined || level === null) return '';
   if (level <= 15) return 'critical';
