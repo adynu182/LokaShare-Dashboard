@@ -521,50 +521,10 @@
 }
 
 /* Manage */
-.manage-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.section-title {
-  font-weight: 700;
-}
-
 .section-desc {
   font-size: 0.9rem;
   color: var(--muted-foreground);
   margin-bottom: 1rem;
-}
-
-.delete-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.delete-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-}
-
-.btn-delete {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #f43f5e;
-  background: rgba(244, 63, 94, 0.05);
-  border: none;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
 }
 
 .confirm-actions {
@@ -590,6 +550,261 @@
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
+}
+
+/* ══════════════════════════════════════════════════════════
+   ManageView · Hapus Data Terperinci · prefix: mv-
+   ══════════════════════════════════════════════════════════ */
+
+.mv-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.mv-card-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0;
+}
+
+.mv-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--border);
+}
+
+.mv-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+/* "Semua Pengguna" pill */
+.mv-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.mv-chip {
+  padding: 6px 13px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: var(--muted);
+  color: var(--muted-foreground);
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.mv-chip.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+/* Grid daftar user (toggle multi-select) */
+.mv-user-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.mv-user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 6px 10px 6px 8px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.mv-user-chip.active {
+  background: color-mix(in srgb, var(--chip-color, var(--primary)) 12%, white);
+  border-color: color-mix(in srgb, var(--chip-color, var(--primary)) 45%, transparent);
+  color: var(--foreground);
+}
+
+.mv-user-chip-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+}
+
+.mv-user-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mv-hint {
+  font-size: 0.7rem;
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+/* Preview ringkasan jumlah data yang akan terhapus */
+.mv-preview {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: 14px;
+  background: rgba(245, 158, 11, 0.08);
+  color: #b45309;
+  transition: opacity 0.15s ease;
+}
+
+.mv-preview--empty {
+  background: var(--muted);
+  color: var(--muted-foreground);
+  opacity: 0.8;
+}
+
+.mv-preview-text {
+  font-size: 0.88rem;
+  color: var(--foreground);
+  line-height: 1.4;
+}
+
+.mv-preview-text strong {
+  font-size: 0.98rem;
+}
+
+.mv-preview-sub {
+  display: block;
+  font-size: 0.76rem;
+  color: var(--muted-foreground);
+  font-weight: 500;
+  margin-top: 1px;
+}
+
+/* Rincian jumlah per-user */
+.mv-breakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: -0.4rem;
+}
+
+.mv-breakdown-chip {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--chip-color, var(--muted-foreground)) 12%, white);
+  color: var(--foreground);
+  border: 1px solid color-mix(in srgb, var(--chip-color, var(--muted-foreground)) 30%, transparent);
+}
+
+.mv-breakdown-chip--more {
+  background: var(--muted);
+  color: var(--muted-foreground);
+  border-color: var(--border);
+}
+
+/* Banner peringatan hapus SEMUA data */
+.mv-danger-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.7rem 0.85rem;
+  border-radius: 12px;
+  background: rgba(244, 63, 94, 0.08);
+  color: #be123c;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* Tombol utama hapus */
+.mv-btn-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0.85rem;
+  border-radius: 14px;
+  border: none;
+  background: #f43f5e;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.mv-btn-delete:hover:not(:disabled) { opacity: 0.9; }
+
+.mv-btn-delete:disabled {
+  background: var(--muted);
+  color: var(--muted-foreground);
+  cursor: not-allowed;
+}
+
+/* Kotak konfirmasi akhir */
+.mv-confirm-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 0.9rem;
+  border-radius: 14px;
+  background: rgba(244, 63, 94, 0.06);
+  border: 1.5px solid rgba(244, 63, 94, 0.25);
+}
+
+.mv-confirm-box p {
+  font-size: 0.85rem;
+  color: var(--foreground);
+  line-height: 1.5;
+}
+
+.mv-confirm-box .confirm-actions {
+  justify-content: flex-end;
+}
+
+.mv-shield-icon {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.mv-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 3rem 1rem;
+  color: var(--muted-foreground);
+  text-align: center;
 }
 
 .info-section {

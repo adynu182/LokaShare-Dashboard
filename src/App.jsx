@@ -6,7 +6,7 @@ import MapCanvas from './components/MapCanvas';
 import ModernToast from './components/ModernToast';
 import StatsHeader from './components/StatsHeader';
 import { useLocations } from './hooks/useLocations';
-import { deleteUserLocations } from './utils/deleteUserData';
+import { deleteLocationsByIds } from './utils/deleteUserData';
 import { getLocalDateKey } from './utils/helpers';
 import HistoryView from './views/HistoryView';
 import ManageView from './views/ManageView';
@@ -137,18 +137,16 @@ export default function App() {
     triggerToast(`Filter: ${label} (${stationaryCounts[value]} titik)`, 'info');
   }, [stationaryCounts]);
 
-  const handleDeleteUser = async (userName) => {
-    const result = await deleteUserLocations(userName);
+  // Hapus data terperinci: ids dihitung di ManageView dari kombinasi
+  // filter user + rentang tanggal, lalu dieksekusi sebagai satu batch delete.
+  const handleDeleteLocations = async (ids, successMessage) => {
+    const result = await deleteLocationsByIds(ids);
     if (result.success) {
-      triggerToast(`Berhasil menghapus data ${userName}`, 'success');
-      if (visibleUsers) {
-        const next = new Set(visibleUsers);
-        next.delete(userName);
-        setVisibleUsers(next);
-      }
+      triggerToast(successMessage || `Berhasil menghapus ${result.deletedCount} data`, 'success');
     } else {
       triggerToast(`Gagal: ${result.error}`, 'error');
     }
+    return result;
   };
 
   // ─── Render ─────────────────────────────────────────────────
@@ -205,7 +203,8 @@ export default function App() {
         {activeTab === 'manage' && (
           <ManageView
             users={users}
-            onDeleteUser={handleDeleteUser}
+            allLocations={allLocations}
+            onDeleteLocations={handleDeleteLocations}
           />
         )}
       </MainSheet>
